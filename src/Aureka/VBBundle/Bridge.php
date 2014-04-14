@@ -2,17 +2,33 @@
 
 namespace Aureka\VBBundle;
 
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\RequestStack;
+
+use Doctrine\DBAL\Connection,
+    Doctrine\DBAL\Configuration,
+    Doctrine\DBAL\DriverManager;
+
 
 class Bridge
 {
 
-    private $requestStack;
+    private $request;
+    private $connection;
 
 
-    public function __construct(RequestStack $request_stack)
+    public function __construct(Request $request, Connection $connection = null)
     {
-        $this->requestStack = $request_stack;
+        $this->request = $request;
+        $this->connection = $connection;
+    }
+
+
+    public static function createForDB(RequestStack $request_stack, array $db_params)
+    {
+        $config = new Configuration();
+        $conn = DriverManager::getConnection($db_params, $config);
+        return new static($request_stack->getCurrentRequest(), $conn);
     }
 
 
@@ -30,6 +46,5 @@ class Bridge
 
     public function login($username)
     {
-        $request = $this->requestStack->getCurrentRequest();
     }
 }
