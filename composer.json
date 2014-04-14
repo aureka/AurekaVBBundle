@@ -13,9 +13,10 @@
         "symfony/framework-bundle" : ">=2.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "symfony/browser-kit":  ">=2.3,<2.4-dev"
     },
     "autoload": {
-        "psr-0": { "Aureka\\VBulletinBundle": "src" }
+        "psr-0": { "Aureka\\VBBundle": "src" }
     }
 }
