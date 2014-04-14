@@ -4,6 +4,7 @@ parameters:
 services:
     aureka_vb.bridge:
         class: Aureka\VBBundle\Bridge
+        arguments: ['@request_stack']
 
     aureka_vb.login_listener:
         class: Aureka\VBBundle\Event\Listener\LoginListener

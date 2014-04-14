@@ -23,6 +23,7 @@ class LoginListener
         if (!$this->bridge->loadUser($username)) {
             $this->bridge->createUser($username);
         }
+        $this->bridge->login($username);
     }
 
 }

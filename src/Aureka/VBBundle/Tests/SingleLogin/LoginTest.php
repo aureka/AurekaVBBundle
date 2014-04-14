@@ -58,6 +58,23 @@ class LoginTest extends WebTestCase
     }
 
 
+    /**
+     * @test
+     */
+    public function itPerformsTheLoginInVbulletin()
+    {
+        $user = $this->getMock('Aureka\VBBundle\VBUser');
+        $vb_bridge = $this->mockVBBridge(array('loadUser' => $user));
+        $event = $this->getAuthenticationEventForUser('test_username');
+
+        $vb_bridge->expects($this->once())
+            ->method('login')
+            ->with('test_username');
+
+        $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
+    }
+
+
     private function getAuthenticationEventForUser($username)
     {
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
@@ -70,7 +87,9 @@ class LoginTest extends WebTestCase
 
     private function mockVBBridge(array $stubs = array())
     {
-        $vb_bridge = $this->getMock('Aureka\VBBundle\Bridge');
+        $vb_bridge = $this->getMockBuilder('Aureka\VBBundle\Bridge')
+            ->disableOriginalConstructor()
+            ->getMock();
         foreach ($stubs as $method => $return_value) {
             $vb_bridge->expects($this->any())
                 ->method($method)
