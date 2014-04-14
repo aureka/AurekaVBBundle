@@ -1,4 +1,4 @@
 AurekaVBulletinBundle
 =====================
 
-Integrates vbulletin in a Symfony application
+Integrates vbulletin with a Symfony application

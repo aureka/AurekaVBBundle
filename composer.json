@@ -1,0 +1,21 @@
+{
+    "name": "aureka/vb-bundle",
+    "type": "symfony-bundle",
+    "version": "0.0.1",
+    "description": "Integrates vBulletin with Symfony applications",
+    "authors": [
+        {
+            "name": "Carles Climent Granell",
+            "email": "carlescliment@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle" : ">=2.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-0": { "Aureka\\VBulletinBundle": "src" }
+    }
+}
