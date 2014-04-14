@@ -19,8 +19,10 @@ class LoginListener
 
     public function onUserLogin(AuthenticationEvent $event)
     {
-        $token = $event->getAuthenticationToken();
-        $this->bridge->createUser($token->getUsername());
+        $username = $event->getAuthenticationToken()->getUsername();
+        if (!$this->bridge->loadUser($username)) {
+            $this->bridge->createUser($username);
+        }
     }
 
 }

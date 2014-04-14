@@ -46,4 +46,28 @@ class LoginTest extends WebTestCase
 
         $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
     }
+
+
+
+    /**
+     * @test
+     */
+    public function itDoesNotCreateAUserInVBulletinIfAlreadyExists()
+    {
+        $vb_bridge = $this->getMock('Aureka\VBBundle\Bridge');
+        $vb_bridge->expects($this->any())
+            ->method('loadUser')
+            ->will($this->returnValue(true));
+        $this->container->set('aureka_vb.bridge', $vb_bridge);
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())
+            ->method('getUsername')
+            ->will($this->returnValue('test_username'));
+        $event = new AuthenticationEvent($token);
+
+        $vb_bridge->expects($this->never())
+            ->method('createUser');
+
+        $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
+    }
 }

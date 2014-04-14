@@ -9,4 +9,9 @@ class Bridge
     {
 
     }
+
+    function loadUser($username)
+    {
+        
+    }
 }
