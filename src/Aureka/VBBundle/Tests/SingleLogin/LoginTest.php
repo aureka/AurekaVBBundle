@@ -32,13 +32,8 @@ class LoginTest extends WebTestCase
      */
     public function itCreatesANewUserInVBulletinIfNotExists()
     {
-        $vb_bridge = $this->getMock('Aureka\VBBundle\Bridge');
-        $this->container->set('aureka_vb.bridge', $vb_bridge);
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())
-            ->method('getUsername')
-            ->will($this->returnValue('test_username'));
-        $event = new AuthenticationEvent($token);
+        $vb_bridge = $this->mockVBBridge();
+        $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->once())
             ->method('createUser')
@@ -48,26 +43,40 @@ class LoginTest extends WebTestCase
     }
 
 
-
     /**
      * @test
      */
     public function itDoesNotCreateAUserInVBulletinIfAlreadyExists()
     {
-        $vb_bridge = $this->getMock('Aureka\VBBundle\Bridge');
-        $vb_bridge->expects($this->any())
-            ->method('loadUser')
-            ->will($this->returnValue(true));
-        $this->container->set('aureka_vb.bridge', $vb_bridge);
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())
-            ->method('getUsername')
-            ->will($this->returnValue('test_username'));
-        $event = new AuthenticationEvent($token);
+        $vb_bridge = $this->mockVBBridge(array('loadUser' => true));
+        $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->never())
             ->method('createUser');
 
         $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
+    }
+
+
+    private function getAuthenticationEventForUser($username)
+    {
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())
+            ->method('getUsername')
+            ->will($this->returnValue('test_username'));
+        return new AuthenticationEvent($token);
+    }
+
+
+    private function mockVBBridge(array $stubs = array())
+    {
+        $vb_bridge = $this->getMock('Aureka\VBBundle\Bridge');
+        foreach ($stubs as $method => $return_value) {
+            $vb_bridge->expects($this->any())
+                ->method($method)
+                ->will($this->returnValue($return_value));
+        }
+        $this->container->set('aureka_vb.bridge', $vb_bridge);
+        return $vb_bridge;
     }
 }
