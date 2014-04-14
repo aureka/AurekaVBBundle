@@ -389,6 +389,14 @@
       </argument>
       <argument type="service" id="debug.stopwatch"/>
       <argument>null</argument>
+      <call method="addListenerService">
+        <argument>security.authentication.success</argument>
+        <argument type="collection">
+          <argument>aureka_vb.login_listener</argument>
+          <argument>onUserLogin</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
       <call method="addSubscriberService">
         <argument>response_listener</argument>
         <argument>Symfony\Component\HttpKernel\EventListener\ResponseListener</argument>
@@ -456,6 +464,11 @@
       <tag name="monolog.logger" channel="security"/>
       <argument>/home/carlescliment/projects/aureka/AurekaVBBundle/src/Aureka/VBBundle/Tests/Application/cache/test/secure_random.seed</argument>
       <argument>null</argument>
+    </service>
+    <service id="aureka_vb.bridge" class="Aureka\VBBundle\Bridge"/>
+    <service id="aureka_vb.login_listener" class="Aureka\VBBundle\Event\Listener\LoginListener">
+      <tag name="kernel.event_listener" event="security.authentication.success" method="onUserLogin"/>
+      <argument type="service" id="aureka_vb.bridge"/>
     </service>
     <service id="annotation_reader" class="Doctrine\Common\Annotations\FileCacheReader">
       <argument type="service">

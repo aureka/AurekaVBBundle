@@ -33,6 +33,8 @@ class ApplicationTestDebugProjectContainer extends Container
         $this->scopeChildren = array('request' => array());
         $this->methodMap = array(
             'annotation_reader' => 'getAnnotationReaderService',
+            'aureka_vb.bridge' => 'getAurekaVb_BridgeService',
+            'aureka_vb.login_listener' => 'getAurekaVb_LoginListenerService',
             'cache_clearer' => 'getCacheClearerService',
             'cache_warmer' => 'getCacheWarmerService',
             'debug.controller_resolver' => 'getDebug_ControllerResolverService',
@@ -106,6 +108,32 @@ class ApplicationTestDebugProjectContainer extends Container
     protected function getAnnotationReaderService()
     {
         return $this->services['annotation_reader'] = new \Doctrine\Common\Annotations\FileCacheReader(new \Doctrine\Common\Annotations\AnnotationReader(), '/home/carlescliment/projects/aureka/AurekaVBBundle/src/Aureka/VBBundle/Tests/Application/cache/test/annotations', true);
+    }
+
+    /**
+     * Gets the 'aureka_vb.bridge' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return Aureka\VBBundle\Bridge A Aureka\VBBundle\Bridge instance.
+     */
+    protected function getAurekaVb_BridgeService()
+    {
+        return $this->services['aureka_vb.bridge'] = new \Aureka\VBBundle\Bridge();
+    }
+
+    /**
+     * Gets the 'aureka_vb.login_listener' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return Aureka\VBBundle\Event\Listener\LoginListener A Aureka\VBBundle\Event\Listener\LoginListener instance.
+     */
+    protected function getAurekaVb_LoginListenerService()
+    {
+        return $this->services['aureka_vb.login_listener'] = new \Aureka\VBBundle\Event\Listener\LoginListener($this->get('aureka_vb.bridge'));
     }
 
     /**
@@ -185,6 +213,7 @@ class ApplicationTestDebugProjectContainer extends Container
     {
         $this->services['debug.event_dispatcher'] = $instance = new \Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher(new \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher($this), $this->get('debug.stopwatch'), NULL);
 
+        $instance->addListenerService('security.authentication.success', array(0 => 'aureka_vb.login_listener', 1 => 'onUserLogin'), 0);
         $instance->addSubscriberService('response_listener', 'Symfony\\Component\\HttpKernel\\EventListener\\ResponseListener');
         $instance->addSubscriberService('streamed_response_listener', 'Symfony\\Component\\HttpKernel\\EventListener\\StreamedResponseListener');
         $instance->addSubscriberService('locale_listener', 'Symfony\\Component\\HttpKernel\\EventListener\\LocaleListener');

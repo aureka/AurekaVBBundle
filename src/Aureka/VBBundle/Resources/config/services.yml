@@ -2,3 +2,11 @@
 parameters:
 
 services:
+    aureka_vb.bridge:
+        class: Aureka\VBBundle\Bridge
+
+    aureka_vb.login_listener:
+        class: Aureka\VBBundle\Event\Listener\LoginListener
+        arguments: ['@aureka_vb.bridge']
+        tags:
+            - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
