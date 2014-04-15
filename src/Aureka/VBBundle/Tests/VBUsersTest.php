@@ -9,16 +9,14 @@ use Symfony\Component\HttpFoundation\Request;
 class VBUsersTest extends \PHPUnit_Framework_TestCase
 {
 
-    private $request;
     private $db;
     private $users;
 
 
     public function setUp()
     {
-        $this->request = new Request;
         $this->db = $this->getMockBuilder('Aureka\VBBundle\VBDatabase')->disableOriginalConstructor()->getMock();
-        $this->users = new VBUsers($this->request, $this->db, 'vb_session_', 1);
+        $this->users = new VBUsers($this->db, 'vb_session_', 1);
     }
 
     /**
@@ -53,14 +51,15 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itDeletesTheSessionWhenLoggingIn()
     {
+        $request = new Request;
         $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
-        $this->request->cookies->set('vb_session_sessionhash', 'SomeHash');
+        $request->cookies->set('vb_session_sessionhash', 'SomeHash');
 
         $this->db->expects($this->once())
             ->method('delete')
             ->with('session', array('sessionhash' => 'SomeHash'));
 
-        $this->users->login($user);
+        $this->users->login($user, $request);
     }
 
 
@@ -74,7 +73,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
         $this->db->expects($this->once())
             ->method('insert');
 
-        $this->users->login($user);
+        $this->users->login($user, new Request);
     }
 
 
@@ -83,11 +82,12 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itCreatesACookieWhenLoggingIn()
     {
+        $request = new Request;
         $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
 
-        $this->users->login($user);
+        $this->users->login($user, $request);
 
-        $this->assertNotNull($this->request->cookies->get('vb_session_sessionhash'));
+        $this->assertNotNull($request->cookies->get('vb_session_sessionhash'));
     }
 
 }

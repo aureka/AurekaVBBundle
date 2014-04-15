@@ -2,31 +2,27 @@
 
 namespace Aureka\VBBundle;
 
-use Symfony\Component\HttpFoundation\Request,
-    Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 
 class VBUsers
 {
 
-    private $request;
     private $db;
     private $cookiePrefix;
     private $ipCheck;
 
 
-    public function __construct(Request $request, VBDatabase $db, $cookie_prefix, $ip_check)
+    public function __construct(VBDatabase $db, $cookie_prefix, $ip_check)
     {
-        $this->request = $request;
         $this->db = $db;
         $this->cookiePrefix = $cookie_prefix;
         $this->ipCheck = $ip_check;
     }
 
 
-    public static function createForDB(RequestStack $request_stack, array $db_params, $db_prefix)
+    public static function createForDB(array $db_params, $db_prefix, $cookie_prefix, $ip_check)
     {
-        $db = VBDatabase::create($db_params, $db_prefix);
-        return new static($request_stack->getCurrentRequest(), $db);
+        return new static(VBDatabase::create($db_params, $db_prefix), $cookie_prefix, $ip_check);
     }
 
 
@@ -44,9 +40,9 @@ class VBUsers
     }
 
 
-    public function login(VBUser $user)
+    public function login(VBUser $user, Request $request)
     {
-        $session = VBSession::fromRequest($this->request, $user, $this->ipCheck, $this->cookiePrefix);
+        $session = VBSession::fromRequest($request, $user, $this->ipCheck, $this->cookiePrefix);
         if ($current_hash = $session->getCookie('sessionhash')) {
             $this->db->delete('session', array('sessionhash' => $current_hash));
         }

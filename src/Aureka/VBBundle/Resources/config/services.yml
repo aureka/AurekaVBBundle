@@ -1,13 +1,19 @@
 # Service definitions
 parameters:
+    aureka_vb.cookie_prefix: ''
+    aureka_vb.db_prefix: 'vb3_'
+    aureka_vb.ip_check: 1
+    aureka_vb.database: []
 
 services:
     aureka_vb.users:
         class: Aureka\VBBundle\VBUsers
-        arguments: ['@request_stack']
+        factory_class: Aureka\VBBundle\VBUsers
+        factory_method: createForDB
+        arguments: ['%aureka_vb.database%', '%aureka_vb.db_prefix%', '%aureka_vb.ip_check%']
 
     aureka_vb.login_listener:
         class: Aureka\VBBundle\Event\Listener\LoginListener
-        arguments: ['@aureka_vb.users']
+        arguments: ['@aureka_vb.users', '@request_stack']
         tags:
             - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
