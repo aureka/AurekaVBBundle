@@ -18,7 +18,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     {
         $this->request = new Request;
         $this->db = $this->getMockBuilder('Aureka\VBBundle\VBDatabase')->disableOriginalConstructor()->getMock();
-        $this->users = new VBUsers($this->request, $this->db, 'vb_session_');
+        $this->users = new VBUsers($this->request, $this->db, 'vb_session_', 1);
     }
 
     /**
@@ -51,7 +51,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itDeletesTheSessionWhenLogingAUser()
+    public function itDeletesTheSessionWhenLoggingAUser()
     {
         $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
         $this->request->cookies->set('vb_session_sessionhash', 'SomeHash');
@@ -59,6 +59,20 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
         $this->db->expects($this->once())
             ->method('delete')
             ->with('session', array('sessionhash' => 'SomeHash'));
+
+        $this->users->login($user);
+    }
+
+
+    /**
+     * @test
+     */
+    public function itStoresANewSessionHashWhenLoggingAUser()
+    {
+        $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
+
+        $this->db->expects($this->once())
+            ->method('insert');
 
         $this->users->login($user);
     }
