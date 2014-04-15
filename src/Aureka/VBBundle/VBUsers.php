@@ -43,7 +43,9 @@ class VBUsers
 
     public function load($username)
     {
-
+        $query = sprintf('SELECT * FROM %s WHERE username = ?', $this->tableName('user'));
+        $data = $this->connection->fetchAssoc($query, array($username));
+        return $data ? VBUser::fromArray($data) : false;
     }
 
 
