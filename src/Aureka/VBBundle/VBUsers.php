@@ -5,47 +5,37 @@ namespace Aureka\VBBundle;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\RequestStack;
 
-use Doctrine\DBAL\Connection,
-    Doctrine\DBAL\Configuration,
-    Doctrine\DBAL\DriverManager;
-
-
 class VBUsers
 {
 
     private $request;
-    private $connection;
-    private $tablePrefix;
+    private $db;
 
 
-    public function __construct(Request $request, Connection $connection, $table_prefix = '')
+    public function __construct(Request $request, VBDatabase $db)
     {
         $this->request = $request;
-        $this->connection = $connection;
-        $this->tablePrefix = $table_prefix;
+        $this->db = $db;
     }
 
 
-    public static function createForDB(RequestStack $request_stack, array $db_params)
+    public static function createForDB(RequestStack $request_stack, array $db_params, $db_prefix)
     {
-        $config = new Configuration();
-        $conn = DriverManager::getConnection($db_params, $config);
-        return new static($request_stack->getCurrentRequest(), $conn);
+        $db = VBDatabase::create($db_params, $db_prefix);
+        return new static($request_stack->getCurrentRequest(), $db);
     }
 
 
     public function create($username)
     {
-        $this->connection->insert($this->tableName('user'), array('username' => $username));
+        $this->db->insert('user', array('username' => $username));
         return $this;
     }
 
 
     public function load($username)
     {
-        $query = sprintf('SELECT * FROM %s WHERE username = ?', $this->tableName('user'));
-        $data = $this->connection->fetchAssoc($query, array($username));
-        return $data ? VBUser::fromArray($data) : false;
+        $data = $this->db->load('user', array('username' => $username));
     }
 
 
@@ -53,9 +43,4 @@ class VBUsers
     {
     }
 
-
-    private function tableName($table)
-    {
-        return "$this->tablePrefix$table";
-    }
 }

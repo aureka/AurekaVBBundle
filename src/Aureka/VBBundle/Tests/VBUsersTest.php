@@ -7,15 +7,15 @@ use Aureka\VBBundle\VBUsers;
 class VBUsersTest extends \PHPUnit_Framework_TestCase
 {
 
-    private $connection;
+    private $db;
     private $users;
 
 
     public function setUp()
     {
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->connection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
-        $this->users = new VBUsers($this->request, $this->connection, 'vb_');
+        $this->db = $this->getMockBuilder('Aureka\VBBundle\VBDatabase')->disableOriginalConstructor()->getMock();
+        $this->users = new VBUsers($this->request, $this->db);
     }
 
     /**
@@ -23,9 +23,9 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itCreatesUsers()
     {
-        $this->connection->expects($this->once())
+        $this->db->expects($this->once())
             ->method('insert')
-            ->with('vb_user', array('username' => 'some_name'));
+            ->with('user', array('username' => 'some_name'));
 
         $this->users->create('some_name');
     }
@@ -36,12 +36,20 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itLoadsAUserByUsername()
     {
-        $this->connection->expects($this->once())
-            ->method('fetchAssoc')
-            ->with('SELECT * FROM vb_user WHERE username = ?', array('some_name'))
+        $this->db->expects($this->once())
+            ->method('load')
+            ->with('user', array('username' => 'some_name'))
             ->will($this->returnValue(array('username' => 'some_name')));
 
         $this->users->load('some_name');
+    }
+
+
+    /**
+     * @test
+     */
+    public function itLoginsAUser()
+    {
     }
 
 }
