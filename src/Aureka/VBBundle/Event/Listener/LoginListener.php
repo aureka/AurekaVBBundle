@@ -2,7 +2,7 @@
 
 namespace Aureka\VBBundle\Event\Listener;
 
-use Aureka\VBBundle\VBUserRepository;
+use Aureka\VBBundle\VBUsers;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
 class LoginListener
@@ -11,7 +11,7 @@ class LoginListener
     private $repository;
 
 
-    public function __construct(VBUserRepository $repository)
+    public function __construct(VBUsers $repository)
     {
         $this->repository = $repository;
     }

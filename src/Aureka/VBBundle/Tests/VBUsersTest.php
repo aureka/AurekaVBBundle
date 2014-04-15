@@ -2,9 +2,9 @@
 
 namespace Aureka\VBBundle\Tests;
 
-use Aureka\VBBundle\VBUserRepository;
+use Aureka\VBBundle\VBUsers;
 
-class VBUserRepositoryTest extends \PHPUnit_Framework_TestCase
+class VBUsersTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -14,13 +14,13 @@ class VBUserRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $connection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
-        $repository = new VBUserRepository($request, $connection, 'vb_');
+        $users = new VBUsers($request, $connection, 'vb_');
 
         $connection->expects($this->once(0))
             ->method('insert')
             ->with('vb_user', array('username' => 'some_name'));
 
-        $repository->create('some_name');
+        $users->create('some_name');
     }
 
 }

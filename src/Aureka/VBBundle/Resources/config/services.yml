@@ -2,12 +2,12 @@
 parameters:
 
 services:
-    aureka_vb.repository:
-        class: Aureka\VBBundle\VBUserRepository
+    aureka_vb.users:
+        class: Aureka\VBBundle\VBUsers
         arguments: ['@request_stack']
 
     aureka_vb.login_listener:
         class: Aureka\VBBundle\Event\Listener\LoginListener
-        arguments: ['@aureka_vb.repository']
+        arguments: ['@aureka_vb.users']
         tags:
             - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }

@@ -32,7 +32,7 @@ class LoginTest extends WebTestCase
      */
     public function itCreatesANewUserInVBulletinIfNotExists()
     {
-        $vb_bridge = $this->mockVBUserRepository();
+        $vb_bridge = $this->mockVBUsers();
         $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->once())
@@ -48,7 +48,7 @@ class LoginTest extends WebTestCase
      */
     public function itDoesNotCreateAUserInVBulletinIfAlreadyExists()
     {
-        $vb_bridge = $this->mockVBUserRepository(array('load' => true));
+        $vb_bridge = $this->mockVBUsers(array('load' => true));
         $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->never())
@@ -64,7 +64,7 @@ class LoginTest extends WebTestCase
     public function itPerformsTheLoginInVbulletin()
     {
         $user = $this->getMock('Aureka\VBBundle\VBUser');
-        $vb_bridge = $this->mockVBUserRepository(array('load' => $user));
+        $vb_bridge = $this->mockVBUsers(array('load' => $user));
         $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->once())
@@ -85,9 +85,9 @@ class LoginTest extends WebTestCase
     }
 
 
-    private function mockVBUserRepository(array $stubs = array())
+    private function mockVBUsers(array $stubs = array())
     {
-        $vb_bridge = $this->getMockBuilder('Aureka\VBBundle\VBUserRepository')
+        $vb_bridge = $this->getMockBuilder('Aureka\VBBundle\VBUsers')
             ->disableOriginalConstructor()
             ->getMock();
         foreach ($stubs as $method => $return_value) {
@@ -95,7 +95,7 @@ class LoginTest extends WebTestCase
                 ->method($method)
                 ->will($this->returnValue($return_value));
         }
-        $this->container->set('aureka_vb.repository', $vb_bridge);
+        $this->container->set('aureka_vb.users', $vb_bridge);
         return $vb_bridge;
     }
 }

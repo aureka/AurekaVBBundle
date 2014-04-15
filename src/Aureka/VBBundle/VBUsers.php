@@ -10,7 +10,7 @@ use Doctrine\DBAL\Connection,
     Doctrine\DBAL\DriverManager;
 
 
-class VBUserRepository
+class VBUsers
 {
 
     private $request;
