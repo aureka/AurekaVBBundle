@@ -46,10 +46,10 @@ class VBUsers
 
     public function login(VBUser $user)
     {
-        if ($current_hash = $this->request->cookies->get($this->cookiePrefix.'sessionhash')) {
+        $session = VBSession::fromRequest($this->request, $user, $this->ipCheck, $this->cookiePrefix);
+        if ($current_hash = $session->getCookie('sessionhash')) {
             $this->db->delete('session', array('sessionhash' => $current_hash));
         }
-        $session = VBSession::fromRequest($this->request, $user, $this->ipCheck);
         $this->db->insert('session', $session->toArray());
     }
 }

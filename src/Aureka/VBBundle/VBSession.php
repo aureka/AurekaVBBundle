@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Request;
 class VBSession
 {
 
+    const LOCATION = '/forum/';
+
     public $userId;
     public $clientIp;
     public $host;
@@ -15,29 +17,27 @@ class VBSession
     public $lastActivity;
     public $loggedIn;
 
-    public function __construct($user_id, $client_ip, $host, $useragent, $location, $lastactivity, $loggedin)
+    private $cookies;
+    private $cookiePrefix;
+
+    public function __construct($cookies, $cookie_prefix)
     {
-        $this->userId = $user_id;
-        $this->clientIp = $client_ip;
-        $this->host = $host;
-        $this->userAgent = $useragent;
-        $this->location = $location;
-        $this->lastActivity = $lastactivity;
-        $this->loggedIn = $loggedin;
+        $this->cookies = $cookies;
+        $this->cookiePrefix = $cookie_prefix;
     }
 
 
-    public static function fromRequest(Request $request, VBUser $user, $ip_check)
+    public static function fromRequest(Request $request, VBUser $user, $ip_check, $cookie_prefix)
     {
-        return new static(
-            $user->id,
-            $request->getClientIp(),
-            substr($request->server->get('REMOTE_ADDR'), 0, 15),
-            $request->headers->get('User-Agent'),
-            '/forum/',
-            time(),
-            2
-            );
+        $session = new static($request->cookies, $cookie_prefix);
+        $session->userId = $user->id;
+        $session->clientIp = $request->getClientIp();
+        $session->host = substr($request->server->get('REMOTE_ADDR'), 0, 15);
+        $session->userAgent = $request->headers->get('User-Agent');
+        $session->location = self::LOCATION;
+        $session->lastActivity = time();
+        $session->loggedIn = 2;
+        return $session;
     }
 
     public function toArray()
@@ -53,6 +53,19 @@ class VBSession
             'loggedin' => $this->loggedIn,
             );
     }
+
+
+    public function hasCookie($cookie_name)
+    {
+        return $this->cookies->has($this->cookiePrefix.$cookie_name);
+    }
+
+
+    public function getCookie($cookie_name)
+    {
+        return $this->cookies->get($this->cookiePrefix.$cookie_name);
+    }
+
 
     private function getHashId()
     {
