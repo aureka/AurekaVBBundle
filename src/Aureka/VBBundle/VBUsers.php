@@ -36,6 +36,7 @@ class VBUsers
     public function load($username)
     {
         $data = $this->db->load('user', array('username' => $username));
+        return $data ? VBUser::fromArray($data) : false;
     }
 
 

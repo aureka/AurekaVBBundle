@@ -39,7 +39,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
         $this->db->expects($this->once())
             ->method('load')
             ->with('user', array('username' => 'some_name'))
-            ->will($this->returnValue(array('username' => 'some_name')));
+            ->will($this->returnValue(array('id' => 1, 'username' => 'some_name', 'password' => '')));
 
         $this->users->load('some_name');
     }

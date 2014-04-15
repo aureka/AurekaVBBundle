@@ -63,7 +63,7 @@ class LoginTest extends WebTestCase
      */
     public function itPerformsTheLoginInVbulletin()
     {
-        $user = $this->getMock('Aureka\VBBundle\VBUser');
+        $user = $this->getMockBuilder('Aureka\VBBundle\VBUser')->disableOriginalConstructor()->getMock();
         $vb_bridge = $this->mockVBUsers(array('load' => $user));
         $event = $this->getAuthenticationEventForUser('test_username');
 
