@@ -32,11 +32,11 @@ class LoginTest extends WebTestCase
      */
     public function itCreatesANewUserInVBulletinIfNotExists()
     {
-        $vb_bridge = $this->mockVBBridge();
+        $vb_bridge = $this->mockVBUserRepository();
         $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->once())
-            ->method('createUser')
+            ->method('create')
             ->with('test_username');
 
         $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
@@ -48,11 +48,11 @@ class LoginTest extends WebTestCase
      */
     public function itDoesNotCreateAUserInVBulletinIfAlreadyExists()
     {
-        $vb_bridge = $this->mockVBBridge(array('loadUser' => true));
+        $vb_bridge = $this->mockVBUserRepository(array('load' => true));
         $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->never())
-            ->method('createUser');
+            ->method('create');
 
         $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
     }
@@ -64,7 +64,7 @@ class LoginTest extends WebTestCase
     public function itPerformsTheLoginInVbulletin()
     {
         $user = $this->getMock('Aureka\VBBundle\VBUser');
-        $vb_bridge = $this->mockVBBridge(array('loadUser' => $user));
+        $vb_bridge = $this->mockVBUserRepository(array('load' => $user));
         $event = $this->getAuthenticationEventForUser('test_username');
 
         $vb_bridge->expects($this->once())
@@ -85,9 +85,9 @@ class LoginTest extends WebTestCase
     }
 
 
-    private function mockVBBridge(array $stubs = array())
+    private function mockVBUserRepository(array $stubs = array())
     {
-        $vb_bridge = $this->getMockBuilder('Aureka\VBBundle\Bridge')
+        $vb_bridge = $this->getMockBuilder('Aureka\VBBundle\VBUserRepository')
             ->disableOriginalConstructor()
             ->getMock();
         foreach ($stubs as $method => $return_value) {
@@ -95,7 +95,7 @@ class LoginTest extends WebTestCase
                 ->method($method)
                 ->will($this->returnValue($return_value));
         }
-        $this->container->set('aureka_vb.bridge', $vb_bridge);
+        $this->container->set('aureka_vb.repository', $vb_bridge);
         return $vb_bridge;
     }
 }

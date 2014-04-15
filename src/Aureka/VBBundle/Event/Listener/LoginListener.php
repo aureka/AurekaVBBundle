@@ -2,28 +2,28 @@
 
 namespace Aureka\VBBundle\Event\Listener;
 
-use Aureka\VBBundle\Bridge;
+use Aureka\VBBundle\VBUserRepository;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
 class LoginListener
 {
 
-    private $bridge;
+    private $repository;
 
 
-    public function __construct(Bridge $bridge)
+    public function __construct(VBUserRepository $repository)
     {
-        $this->bridge = $bridge;
+        $this->repository = $repository;
     }
 
 
     public function onUserLogin(AuthenticationEvent $event)
     {
         $username = $event->getAuthenticationToken()->getUsername();
-        if (!$this->bridge->loadUser($username)) {
-            $this->bridge->createUser($username);
+        if (!$this->repository->load($username)) {
+            $this->repository->create($username);
         }
-        $this->bridge->login($username);
+        $this->repository->login($username);
     }
 
 }

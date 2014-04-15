@@ -10,7 +10,7 @@ use Doctrine\DBAL\Connection,
     Doctrine\DBAL\DriverManager;
 
 
-class Bridge
+class VBUserRepository
 {
 
     private $request;
@@ -34,14 +34,14 @@ class Bridge
     }
 
 
-    public function createUser($username)
+    public function create($username)
     {
         $this->connection->insert($this->tableName('user'), array('username' => $username));
         return $this;
     }
 
 
-    public function loadUser($username)
+    public function load($username)
     {
 
     }
