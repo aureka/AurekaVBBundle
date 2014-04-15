@@ -51,7 +51,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itDeletesTheSessionWhenLoggingAUser()
+    public function itDeletesTheSessionWhenLoggingIn()
     {
         $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
         $this->request->cookies->set('vb_session_sessionhash', 'SomeHash');
@@ -67,7 +67,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itStoresANewSessionHashWhenLoggingAUser()
+    public function itStoresANewSessionHashWhenLoggingIn()
     {
         $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
 
@@ -75,6 +75,19 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
             ->method('insert');
 
         $this->users->login($user);
+    }
+
+
+    /**
+     * @test
+     */
+    public function itCreatesACookieWhenLoggingIn()
+    {
+        $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
+
+        $this->users->login($user);
+
+        $this->assertNotNull($this->request->cookies->get('vb_session_sessionhash'));
     }
 
 }

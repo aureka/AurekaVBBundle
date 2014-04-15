@@ -51,5 +51,7 @@ class VBUsers
             $this->db->delete('session', array('sessionhash' => $current_hash));
         }
         $this->db->insert('session', $session->toArray());
+        $session->login();
+        return $this;
     }
 }

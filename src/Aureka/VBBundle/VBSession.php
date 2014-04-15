@@ -40,6 +40,7 @@ class VBSession
         return $session;
     }
 
+
     public function toArray()
     {
         return array(
@@ -55,6 +56,19 @@ class VBSession
     }
 
 
+    public function login()
+    {
+        $now = time();
+        $this->setCookie('sessionhash', $this->getSessionHash());
+        $this->setCookie('lastvisit', $now);
+        $this->setCookie('lastactivity', $now);
+        $this->setCookie('userid', $this->userId);
+        $this->setCookie('password', '');
+        return $this;
+    }
+
+
+
     public function hasCookie($cookie_name)
     {
         return $this->cookies->has($this->cookiePrefix.$cookie_name);
@@ -64,6 +78,12 @@ class VBSession
     public function getCookie($cookie_name)
     {
         return $this->cookies->get($this->cookiePrefix.$cookie_name);
+    }
+
+
+    public function setCookie($cookie_name, $value)
+    {
+        return $this->cookies->set($this->cookiePrefix.$cookie_name, $value);
     }
 
 
