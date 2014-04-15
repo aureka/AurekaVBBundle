@@ -10,12 +10,14 @@ class VBUsers
 
     private $request;
     private $db;
+    private $cookiePrefix;
 
 
-    public function __construct(Request $request, VBDatabase $db)
+    public function __construct(Request $request, VBDatabase $db, $cookie_prefix)
     {
         $this->request = $request;
         $this->db = $db;
+        $this->cookiePrefix = $cookie_prefix;
     }
 
 
@@ -40,8 +42,11 @@ class VBUsers
     }
 
 
-    public function login($username)
+    public function login(VBUser $user)
     {
+        if ($current_hash = $this->request->cookies->get($this->cookiePrefix.'sessionhash')) {
+            $this->db->delete('session', array('sessionhash' => $current_hash));
+        }
     }
 
 }

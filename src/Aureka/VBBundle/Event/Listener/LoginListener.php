@@ -20,10 +20,8 @@ class LoginListener
     public function onUserLogin(AuthenticationEvent $event)
     {
         $username = $event->getAuthenticationToken()->getUsername();
-        if (!$this->repository->load($username)) {
-            $this->repository->create($username);
-        }
-        $this->repository->login($username);
+        $user = $this->repository->load($username) ?: $this->repository->create($username);
+        $this->repository->login($user);
     }
 
 }

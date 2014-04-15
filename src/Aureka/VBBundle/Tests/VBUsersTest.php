@@ -2,20 +2,23 @@
 
 namespace Aureka\VBBundle\Tests;
 
-use Aureka\VBBundle\VBUsers;
+use Aureka\VBBundle\VBUsers,
+    Aureka\VBBundle\VBUser;
+use Symfony\Component\HttpFoundation\Request;
 
 class VBUsersTest extends \PHPUnit_Framework_TestCase
 {
 
+    private $request;
     private $db;
     private $users;
 
 
     public function setUp()
     {
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $this->request = new Request;
         $this->db = $this->getMockBuilder('Aureka\VBBundle\VBDatabase')->disableOriginalConstructor()->getMock();
-        $this->users = new VBUsers($this->request, $this->db);
+        $this->users = new VBUsers($this->request, $this->db, 'vb_session_');
     }
 
     /**
@@ -48,8 +51,16 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itLoginsAUser()
+    public function itDeletesTheSessionWhenLogingAUser()
     {
+        $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
+        $this->request->cookies->set('vb_session_sessionhash', 'SomeHash');
+
+        $this->db->expects($this->once())
+            ->method('delete')
+            ->with('session', array('sessionhash' => 'SomeHash'));
+
+        $this->users->login($user);
     }
 
 }

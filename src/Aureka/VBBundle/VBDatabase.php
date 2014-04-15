@@ -36,6 +36,12 @@ class VBDatabase
     }
 
 
+    public function delete($table, $filters)
+    {
+        return $this->connection->delete($this->prefix($table), $filters);
+    }
+
+
     public function load($table, $filters)
     {
         $query = sprintf('SELECT * FROM %s WHERE username = ?', $table, $this->prepareFilters($filters));
