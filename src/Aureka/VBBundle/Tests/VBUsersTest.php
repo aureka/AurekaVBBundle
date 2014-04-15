@@ -38,7 +38,8 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     {
         $this->connection->expects($this->once())
             ->method('fetchAssoc')
-            ->with('SELECT * FROM vb_user WHERE username = ?', array('some_name'));
+            ->with('SELECT * FROM vb_user WHERE username = ?', array('some_name'))
+            ->will($this->returnValue(array('username' => 'some_name')));
 
         $this->users->load('some_name');
     }
