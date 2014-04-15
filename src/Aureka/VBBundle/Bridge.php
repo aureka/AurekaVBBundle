@@ -15,12 +15,14 @@ class Bridge
 
     private $request;
     private $connection;
+    private $tablePrefix;
 
 
-    public function __construct(Request $request, Connection $connection = null)
+    public function __construct(Request $request, Connection $connection, $table_prefix = '')
     {
         $this->request = $request;
         $this->connection = $connection;
+        $this->tablePrefix = $table_prefix;
     }
 
 
@@ -34,7 +36,8 @@ class Bridge
 
     public function createUser($username)
     {
-
+        $this->connection->insert($this->tableName('user'), array('username' => $username));
+        return $this;
     }
 
 
@@ -46,5 +49,11 @@ class Bridge
 
     public function login($username)
     {
+    }
+
+
+    private function tableName($table)
+    {
+        return "$this->tablePrefix$table";
     }
 }
