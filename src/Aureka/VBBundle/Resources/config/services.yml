@@ -10,7 +10,7 @@ services:
         class: Aureka\VBBundle\VBUsers
         factory_class: Aureka\VBBundle\VBUsers
         factory_method: createForDB
-        arguments: ['%aureka_vb.database%', '%aureka_vb.db_prefix%', '%aureka_vb.ip_check%']
+        arguments: ['%aureka_vb.database%', '%aureka_vb.db_prefix%', '%aureka_vb.cookie_prefix%', '%aureka_vb.ip_check%']
 
     aureka_vb.login_listener:
         class: Aureka\VBBundle\Event\Listener\LoginListener
