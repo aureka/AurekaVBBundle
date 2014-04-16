@@ -16,7 +16,6 @@ class VBDatabase
 
     public function __construct(Connection $connection, $table_prefix = '')
     {
-        $this->request = $request;
         $this->connection = $connection;
         $this->tablePrefix = $table_prefix;
     }
