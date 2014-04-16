@@ -43,8 +43,8 @@ class VBDatabase
 
     public function load($table, $filters)
     {
-        $query = sprintf('SELECT * FROM %s WHERE username = ?', $table, $this->prepareFilters($filters));
-        return $this->connection->fetchAssoc($table, array_values($filters));
+        $query = sprintf('SELECT * FROM %s WHERE username = ?', $this->prefix($table), $this->prepareFilters($filters));
+        return $this->connection->fetchAssoc($query, array_values($filters));
     }
 
 

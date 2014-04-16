@@ -29,7 +29,7 @@ class VBUsers
     public function create($username)
     {
         $this->db->insert('user', array('username' => $username));
-        return $this;
+        return $this->load($username);
     }
 
 

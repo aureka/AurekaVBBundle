@@ -18,6 +18,6 @@ class VBUser
 
     public static function fromArray(array $data)
     {
-        return new static($data['id'], $data['username'], $data['password']);
+        return new static($data['userid'], $data['username'], $data['password']);
     }
 }

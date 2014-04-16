@@ -40,7 +40,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
         $this->db->expects($this->once())
             ->method('load')
             ->with('user', array('username' => 'some_name'))
-            ->will($this->returnValue(array('id' => 1, 'username' => 'some_name', 'password' => '')));
+            ->will($this->returnValue(array('userid' => 1, 'username' => 'some_name', 'password' => '')));
 
         $this->users->load('some_name');
     }
@@ -52,7 +52,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     public function itDeletesTheSessionWhenLoggingIn()
     {
         $request = new Request;
-        $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
+        $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
         $request->cookies->set('vb_session_sessionhash', 'SomeHash');
 
         $this->db->expects($this->once())
@@ -68,7 +68,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itStoresANewSessionHashWhenLoggingIn()
     {
-        $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
+        $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
 
         $this->db->expects($this->once())
             ->method('insert');
@@ -83,7 +83,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     public function itCreatesACookieWhenLoggingIn()
     {
         $request = new Request;
-        $user = VBUser::fromArray(array('id' => 1, 'username' => 'some_name', 'password' => ''));
+        $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
 
         $this->users->login($user, $request);
 

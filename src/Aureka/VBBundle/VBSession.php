@@ -19,6 +19,7 @@ class VBSession
 
     private $cookies;
     private $cookiePrefix;
+    private $sessionHash;
 
     public function __construct($cookies, $cookie_prefix)
     {
@@ -37,14 +38,21 @@ class VBSession
         $session->location = self::LOCATION;
         $session->lastActivity = time();
         $session->loggedIn = 2;
-        return $session;
+        return $session->initialize();
+    }
+
+
+    public function initialize()
+    {
+        $this->sessionHash = $this->createSessionHash();
+        return $this;
     }
 
 
     public function toArray()
     {
         return array(
-            'sessionhash' => $this->getSessionHash(),
+            'sessionhash' => $this->sessionHash,
             'userid' => $this->userId,
             'host' => $this->host,
             'idhash' => $this->getHashId(),
@@ -59,7 +67,7 @@ class VBSession
     public function login()
     {
         $now = time();
-        $this->setCookie('sessionhash', $this->getSessionHash());
+        $this->setCookie('sessionhash', $this->sessionHash);
         $this->setCookie('lastvisit', $now);
         $this->setCookie('lastactivity', $now);
         $this->setCookie('userid', $this->userId);
@@ -93,7 +101,7 @@ class VBSession
     }
 
 
-    private function getSessionHash()
+    private function createSessionHash()
     {
         return md5($this->lastActivity . '/forum/' . $this->getHashId() . $this->host . $this->randomPassword(6));
     }
