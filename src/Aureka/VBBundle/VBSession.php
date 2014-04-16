@@ -2,7 +2,9 @@
 
 namespace Aureka\VBBundle;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class VBSession
 {
@@ -17,24 +19,24 @@ class VBSession
     public $lastActivity;
     public $loggedIn;
 
-    private $cookies;
+    private $headers;
     private $cookiePrefix;
     private $sessionHash;
 
-    public function __construct($cookies, $cookie_prefix)
+    public function __construct(ResponseHeaderBag $headers, $cookie_prefix)
     {
-        $this->cookies = $cookies;
+        $this->headers = $headers;
         $this->cookiePrefix = $cookie_prefix;
     }
 
 
-    public static function fromRequest(Request $request, VBUser $user, $ip_check, $cookie_prefix)
+    public static function createFor(Response $response, VBUser $user, $ip_check, $cookie_prefix)
     {
-        $session = new static($request->cookies, $cookie_prefix);
+        $session = new static($response->headers, $cookie_prefix);
         $session->userId = $user->id;
-        $session->clientIp = $request->getClientIp();
-        $session->host = substr($request->server->get('REMOTE_ADDR'), 0, 15);
-        $session->userAgent = $request->headers->get('User-Agent');
+        $session->clientIp = ''; //$response->getClientIp();
+        $session->host = ''; //substr($response->server->get('REMOTE_ADDR'), 0, 15);
+        $session->userAgent = $response->headers->get('User-Agent');
         $session->location = self::LOCATION;
         $session->lastActivity = time();
         $session->loggedIn = 2;
@@ -79,19 +81,26 @@ class VBSession
 
     public function hasCookie($cookie_name)
     {
-        return $this->cookies->has($this->cookiePrefix.$cookie_name);
+        return null !== $this->getCookie($cookie_name);
     }
 
 
     public function getCookie($cookie_name)
     {
-        return $this->cookies->get($this->cookiePrefix.$cookie_name);
+        $cookies = $this->headers->getCookies();
+        foreach ($cookies as $cookie) {
+            if ($cookie->getName() == $this->prefix($cookie_name)) {
+                return $cookie->getValue();
+            }
+        }
+        return null;
     }
 
 
     public function setCookie($cookie_name, $value)
     {
-        return $this->cookies->set($this->cookiePrefix.$cookie_name, $value);
+        $cookie = new Cookie($this->prefix($cookie_name), $value);
+        return $this->headers->setCookie($cookie);
     }
 
 
@@ -115,5 +124,11 @@ class VBSession
             $randomPassword .= $characters[rand(0, strlen($characters) - 1)];
         }
         return $randomPassword;
+    }
+
+
+    private function prefix($cookie_name)
+    {
+        return $this->cookiePrefix.$cookie_name;
     }
 }

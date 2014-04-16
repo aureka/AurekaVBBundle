@@ -4,7 +4,8 @@ namespace Aureka\VBBundle\Tests;
 
 use Aureka\VBBundle\VBUsers,
     Aureka\VBBundle\VBUser;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response,
+    Symfony\Component\HttpFoundation\Cookie;
 
 class VBUsersTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,15 +52,15 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itDeletesTheSessionWhenLoggingIn()
     {
-        $request = new Request;
+        $response = new Response;
         $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
-        $request->cookies->set('vb_session_sessionhash', 'SomeHash');
+        $response->headers->setCookie(new Cookie('vb_session_sessionhash', 'SomeHash'));
 
         $this->db->expects($this->once())
             ->method('delete')
             ->with('session', array('sessionhash' => 'SomeHash'));
 
-        $this->users->login($user, $request);
+        $this->users->login($user, $response);
     }
 
 
@@ -73,7 +74,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
         $this->db->expects($this->once())
             ->method('insert');
 
-        $this->users->login($user, new Request);
+        $this->users->login($user, new Response);
     }
 
 
@@ -82,12 +83,12 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itCreatesACookieWhenLoggingIn()
     {
-        $request = new Request;
+        $response = new Response;
         $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
 
-        $this->users->login($user, $request);
+        $this->users->login($user, $response);
 
-        $this->assertNotNull($request->cookies->get('vb_session_sessionhash'));
+        $this->assertNotEmpty($response->headers->getCookies());
     }
 
 }

@@ -5,6 +5,7 @@ namespace Aureka\VBBundle\Tests\Event\Listener;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\AuthenticationEvents,
     Symfony\Component\Security\Core\Event\AuthenticationEvent;
+use Symfony\Component\HttpFoundation\Response;
 
 use Aureka\VBBundle\Event\Listener\LoginListener;
 
@@ -60,13 +61,15 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
     {
         $user = $this->aUser();
         $vb_bridge = $this->mockVBUsers(array('load' => $user));
-        $event = $this->getAuthenticationEventForUser('test_username');
+        $authentication_event = $this->getAuthenticationEventForUser('test_username');
+        $response_event = $this->getResponseEvent();
 
         $this->repository->expects($this->once())
             ->method('login')
             ->with($user);
 
-        $this->listener->onUserLogin($event);
+        $this->listener->onUserLogin($authentication_event);
+        $this->listener->onKernelResponse($response_event);
     }
 
 
@@ -77,6 +80,15 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getUsername')
             ->will($this->returnValue('test_username'));
         return new AuthenticationEvent($token);
+    }
+
+    private function getResponseEvent()
+    {
+        $event = $this->getMockBuilder('Symfony\Component\HttpKernel\Event\FilterResponseEvent')->disableOriginalConstructor()->getMock();
+        $event->expects($this->any())
+            ->method('getResponse')
+            ->will($this->returnValue(new Response));
+        return $event;
     }
 
 

@@ -13,3 +13,4 @@ services:
         arguments: ['@aureka_vb.configuration', '@request_stack']
         tags:
             - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }

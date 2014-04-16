@@ -2,7 +2,7 @@
 
 namespace Aureka\VBBundle;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class VBUsers
 {
@@ -47,9 +47,9 @@ class VBUsers
     }
 
 
-    public function login(VBUser $user, Request $request)
+    public function login(VBUser $user, Response $response)
     {
-        $session = VBSession::fromRequest($request, $user, $this->ipCheck, $this->cookiePrefix);
+        $session = VBSession::createFor($response, $user, $this->ipCheck, $this->cookiePrefix);
         if ($current_hash = $session->getCookie('sessionhash')) {
             $this->db->delete('session', array('sessionhash' => $current_hash));
         }
