@@ -2,28 +2,23 @@
 
 namespace Aureka\VBBundle\Tests\Event\Listener;
 
-use Aureka\VBBundle\Tests\Application\AppKernel;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\AuthenticationEvents,
     Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Aureka\VBBundle\Event\Listener\LoginListener;
 
-class LoginListenerTest extends WebTestCase
+
+class LoginListenerTest extends \PHPUnit_Framework_TestCase
 {
 
-    private $container;
-    private $dispatcher;
-
-    protected static function createKernel(array $options = array())
-    {
-        return new AppKernel('test', true);
-    }
-
+    private $listener;
+    private $repository;
 
     public function setUp()
     {
-        $this->container = self::createClient()->getKernel()->getContainer();
-        $this->dispatcher = $this->container->get('event_dispatcher');
+        $this->repository = $this->getMockBuilder('Aureka\VBBundle\VBUSers')->disableOriginalConstructor()->getMock();
+        $this->listener = new LoginListener($this->repository, new RequestStack);
     }
 
 
@@ -32,14 +27,14 @@ class LoginListenerTest extends WebTestCase
      */
     public function itCreatesANewUserInVBulletinIfNotExists()
     {
-        $vb_bridge = $this->mockVBUsers(array('load' => false, 'create' => $this->aUser()));
+        $this->mockVBUsers(array('load' => false, 'create' => $this->aUser()));
         $event = $this->getAuthenticationEventForUser('test_username');
 
-        $vb_bridge->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('create')
             ->with('test_username');
 
-        $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
+        $this->listener->onUserLogin($event);
     }
 
 
@@ -48,13 +43,13 @@ class LoginListenerTest extends WebTestCase
      */
     public function itDoesNotCreateAUserInVBulletinIfAlreadyExists()
     {
-        $vb_bridge = $this->mockVBUsers(array('load' => $this->aUser()));
+        $this->mockVBUsers(array('load' => $this->aUser()));
         $event = $this->getAuthenticationEventForUser('test_username');
 
-        $vb_bridge->expects($this->never())
+        $this->repository->expects($this->never())
             ->method('create');
 
-        $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
+        $this->listener->onUserLogin($event);
     }
 
 
@@ -67,11 +62,11 @@ class LoginListenerTest extends WebTestCase
         $vb_bridge = $this->mockVBUsers(array('load' => $user));
         $event = $this->getAuthenticationEventForUser('test_username');
 
-        $vb_bridge->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('login')
             ->with($user);
 
-        $this->dispatcher->dispatch(AuthenticationEvents::AUTHENTICATION_SUCCESS, $event);
+        $this->listener->onUserLogin($event);
     }
 
 
@@ -87,16 +82,11 @@ class LoginListenerTest extends WebTestCase
 
     private function mockVBUsers(array $stubs = array())
     {
-        $vb_bridge = $this->getMockBuilder('Aureka\VBBundle\VBUsers')
-            ->disableOriginalConstructor()
-            ->getMock();
         foreach ($stubs as $method => $return_value) {
-            $vb_bridge->expects($this->any())
+            $this->repository->expects($this->any())
                 ->method($method)
                 ->will($this->returnValue($return_value));
         }
-        $this->container->set('aureka_vb.users', $vb_bridge);
-        return $vb_bridge;
     }
 
 
