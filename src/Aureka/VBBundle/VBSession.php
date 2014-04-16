@@ -30,12 +30,15 @@ class VBSession
     }
 
 
+    /**
+     * @todo fill in client ip and host
+     */
     public static function createFor(Response $response, VBUser $user, $ip_check, $cookie_prefix)
     {
         $session = new static($response->headers, $cookie_prefix);
         $session->userId = $user->id;
-        $session->clientIp = ''; //$response->getClientIp();
-        $session->host = ''; //substr($response->server->get('REMOTE_ADDR'), 0, 15);
+        $session->clientIp = '';
+        $session->host = '';
         $session->userAgent = $response->headers->get('User-Agent');
         $session->location = self::LOCATION;
         $session->lastActivity = time();
