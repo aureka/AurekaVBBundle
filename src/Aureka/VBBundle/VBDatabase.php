@@ -54,7 +54,7 @@ class VBDatabase
     }
 
 
-    private function prepareFilters($table, $filters)
+    private function prepareFilters($filters)
     {
         return implode(' ', array_map(function ($key) { return "$key = ?"; }, array_keys($filters)));
     }
