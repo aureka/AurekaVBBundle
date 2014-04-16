@@ -17,7 +17,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->repository = $this->getMockBuilder('Aureka\VBBundle\VBUSers')->disableOriginalConstructor()->getMock();
+        $this->repository = $this->getMockBuilder('Aureka\VBBundle\VBUsers')->disableOriginalConstructor()->getMock();
         $this->listener = new LoginListener($this->repository, new RequestStack);
     }
 
