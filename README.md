@@ -9,9 +9,11 @@ Integrates vbulletin with a Symfony application
 Add the following line to your `composer.json`:
 
 ```json
+{
     "require": {
         "aureka/vb-bundle" : "dev-master"
-    },
+    }
+}
 ```
 
 Execute `composer update`.
