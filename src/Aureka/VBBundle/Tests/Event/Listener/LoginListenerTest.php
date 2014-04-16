@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\AuthenticationEvents,
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class LoginTest extends WebTestCase
+class LoginListenerTest extends WebTestCase
 {
 
     private $container;

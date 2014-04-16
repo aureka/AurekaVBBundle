@@ -1,3 +1,13 @@
 framework:
     secret: test
     test:   ~
+
+aureka_vb:
+    cookie_prefix: vb_
+    database:
+        host: localhost
+        name: test_db
+        port: null
+        user: test_user
+        password: test_password
+        table_prefix: vb3_

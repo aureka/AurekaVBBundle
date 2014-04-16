@@ -5,6 +5,8 @@ namespace Aureka\VBBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+use Aureka\VBBundle\VBUser;
+
 /**
  * This is the class that validates and merges configuration from your app/config files
  *
@@ -19,6 +21,23 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('aureka_vb');
+        $rootNode
+            ->children()
+                ->scalarNode('default_user_group')->defaultValue(VBUser::DEFAULT_GROUP)->end()
+                ->scalarNode('ip_check')->defaultValue(1)->end()
+                ->scalarNode('cookie_prefix')->defaultValue('')->end()
+                ->arrayNode('database')
+                    ->isRequired()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('host')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('name')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('port')->isRequired()->end()
+                        ->scalarNode('user')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('password')->isRequired()->end()
+                        ->scalarNode('table_prefix')->defaultValue('')->end()
+                    ->end()
+            ->end();
         return $treeBuilder;
     }
 

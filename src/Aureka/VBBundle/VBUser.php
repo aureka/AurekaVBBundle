@@ -4,6 +4,9 @@ namespace Aureka\VBBundle;
 
 class VBUser
 {
+
+    const DEFAULT_GROUP = 2;
+
     public $id;
     public $username;
     public $password;
