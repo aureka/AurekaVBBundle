@@ -20,9 +20,16 @@ class VBUsers
     }
 
 
-    public static function createForDB(array $db_params, $db_prefix, $cookie_prefix, $ip_check)
+    public static function createFor(VBConfiguration $config)
     {
-        return new static(VBDatabase::create($db_params, $db_prefix), $cookie_prefix, $ip_check);
+        return new static($config->createDB(), $config->cookiePrefix, $config->ipCheck);
+    }
+
+
+    public function connect()
+    {
+        $this->db->connect();
+        return $this;
     }
 
 

@@ -22,6 +22,7 @@ class AurekaVBExtension extends Extension
         $config_definition->addArgument($config['default_user_group']);
         $config_definition->addArgument($config['cookie_prefix']);
         $config_definition->addArgument($config['ip_check']);
+        $config_definition->addArgument($config['database']['driver']);
         $config_definition->addArgument($config['database']['host']);
         $config_definition->addArgument($config['database']['name']);
         $config_definition->addArgument($config['database']['port']);

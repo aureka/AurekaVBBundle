@@ -2,7 +2,8 @@
 
 namespace Aureka\VBBundle\Event\Listener;
 
-use Aureka\VBBundle\VBUsers;
+use Aureka\VBBundle\VBUsers,
+    Aureka\VBBundle\VBConfiguration;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -22,9 +23,16 @@ class LoginListener
     }
 
 
+    public static function createFor(VBConfiguration $config, RequestStack $request_stack)
+    {
+        return new static(VBUsers::createFor($config), $request_stack);
+    }
+
+
     public function onUserLogin(AuthenticationEvent $event)
     {
         $username = $event->getAuthenticationToken()->getUsername();
+        $this->repository->connect();
         $user = $this->repository->load($username) ?: $this->repository->create($username);
         $this->repository->login($user, $this->getCurrentRequest());
     }

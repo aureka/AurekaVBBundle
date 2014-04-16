@@ -10,22 +10,25 @@ use Doctrine\DBAL\Connection,
 class VBDatabase
 {
 
-    private $connection;
+    private $dbParams;
     private $tablePrefix;
+    private $connection;
 
 
-    public function __construct(Connection $connection, $table_prefix = '')
+    public function __construct(array $db_params, $table_prefix = '')
     {
-        $this->connection = $connection;
+        $this->dbParams =$db_params;
         $this->tablePrefix = $table_prefix;
     }
 
 
-    public static function create(array $db_params, $table_prefix)
+    public function connect()
     {
-        $config = new Configuration();
-        $conn = DriverManager::getConnection($db_params, $config);
-        return new static($conn, $table_prefix);
+        if (is_null($this->connection)) {
+            $config = new Configuration();
+            $this->connection = DriverManager::getConnection($this->dbParams, $config);
+        }
+        return $this;
     }
 
 

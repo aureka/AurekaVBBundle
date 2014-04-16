@@ -5,6 +5,7 @@ framework:
 aureka_vb:
     cookie_prefix: vb_
     database:
+        driver: pdo_mysql
         host: localhost
         name: test_db
         port: null

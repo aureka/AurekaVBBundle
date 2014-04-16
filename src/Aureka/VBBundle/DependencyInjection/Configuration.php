@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->scalarNode('driver')->isRequired()->cannotBeEmpty()->end()
                         ->scalarNode('host')->isRequired()->cannotBeEmpty()->end()
                         ->scalarNode('name')->isRequired()->cannotBeEmpty()->end()
                         ->scalarNode('port')->isRequired()->end()

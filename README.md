@@ -39,6 +39,7 @@ aureka_cmf:
     ip_check: 1 #optional
     cookie_prefix: 'vb_' #optional
     database:
+        driver: pdo_mysql
         host: localhost
         name: vb_database_name
         port: null
