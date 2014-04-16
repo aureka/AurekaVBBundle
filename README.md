@@ -26,6 +26,7 @@ public function registerBundles()
         new Aureka\VBBundle\AurekaVBBundle(),
     );
 }
+```
 
 
 ## Configuration
