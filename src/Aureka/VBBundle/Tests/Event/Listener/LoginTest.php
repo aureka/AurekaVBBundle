@@ -1,6 +1,6 @@
 <?php
 
-namespace Aureka\VBBundle\Tests\SingleLogin;
+namespace Aureka\VBBundle\Tests\Event\Listener;
 
 use Aureka\VBBundle\Tests\Application\AppKernel;
 use Symfony\Component\Security\Core\AuthenticationEvents,
