@@ -21,21 +21,23 @@ class VBSession
 
     private $headers;
     private $cookiePrefix;
+    private $license;
     private $sessionHash;
 
-    public function __construct(ResponseHeaderBag $headers, $cookie_prefix)
+    public function __construct(ResponseHeaderBag $headers, $cookie_prefix, $license)
     {
         $this->headers = $headers;
         $this->cookiePrefix = $cookie_prefix;
+        $this->license = $license;
     }
 
 
     /**
      * @todo fill in client ip, user-agent and host
      */
-    public static function createFor(Response $response, VBUser $user, $ip_check, $cookie_prefix)
+    public static function createFor(Response $response, VBUser $user, $ip_check, $cookie_prefix, $license)
     {
-        $session = new static($response->headers, $cookie_prefix);
+        $session = new static($response->headers, $cookie_prefix, $license);
         $session->userId = $user->id;
         $session->clientIp = '';
         $session->host = '';
@@ -69,14 +71,14 @@ class VBSession
     }
 
 
-    public function login()
+    public function login(VBUser $user)
     {
         $now = time();
         $this->setCookie('sessionhash', $this->sessionHash);
         $this->setCookie('lastvisit', $now);
         $this->setCookie('lastactivity', $now);
         $this->setCookie('userid', $this->userId);
-        $this->setCookie('password', '');
+        $this->setCookie('password', md5($user->password.$this->license));
         return $this;
     }
 
@@ -102,7 +104,7 @@ class VBSession
 
     public function setCookie($cookie_name, $value)
     {
-        $cookie = new Cookie($this->prefix($cookie_name), $value);
+        $cookie = new Cookie($this->prefix($cookie_name), $value, 0, '/', null, false, false);
         return $this->headers->setCookie($cookie);
     }
 

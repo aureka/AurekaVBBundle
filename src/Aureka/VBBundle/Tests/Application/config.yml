@@ -3,6 +3,7 @@ framework:
     test:   ~
 
 aureka_vb:
+    license: somelicense
     cookie_prefix: vb_
     database:
         driver: pdo_mysql

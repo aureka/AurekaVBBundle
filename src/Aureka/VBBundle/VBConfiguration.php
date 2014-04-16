@@ -5,6 +5,7 @@ namespace Aureka\VBBundle;
 class VBConfiguration
 {
 
+    public $license;
     public $defaultUserGroup;
     public $cookiePrefix;
     public $dbDriver;
@@ -16,6 +17,7 @@ class VBConfiguration
     public $dbPrefix;
 
     public function __construct(
+        $license,
         $default_user_group,
         $cookie_prefix,
         $ip_check,
@@ -27,6 +29,7 @@ class VBConfiguration
         $db_password,
         $db_prefix)
     {
+        $this->license = $license;
         $this->defaultUserGroup = $default_user_group;
         $this->ipCheck = $ip_check;
         $this->cookiePrefix = $cookie_prefix;

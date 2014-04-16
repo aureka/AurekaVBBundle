@@ -35,6 +35,7 @@ class LoginListenerTest extends WebTestCase
 
         $this->assertInstanceOf('Aureka\VBBundle\VBConfiguration', $config);
         $this->assertEquals($config->defaultUserGroup, VBUser::DEFAULT_GROUP);
+        $this->assertEquals($config->license, 'somelicense');
         $this->assertEquals($config->dbDriver, 'pdo_mysql');
         $this->assertEquals($config->dbHost, 'localhost');
         $this->assertEquals($config->dbName, 'test_db');

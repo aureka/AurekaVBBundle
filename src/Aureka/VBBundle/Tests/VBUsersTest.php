@@ -17,7 +17,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->db = $this->getMockBuilder('Aureka\VBBundle\VBDatabase')->disableOriginalConstructor()->getMock();
-        $this->users = new VBUsers($this->db, 'vb_session_', 1);
+        $this->users = new VBUsers($this->db, 'vb_session_', 1, 'license');
     }
 
     /**
