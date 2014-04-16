@@ -31,7 +31,7 @@ class VBSession
 
 
     /**
-     * @todo fill in client ip and host
+     * @todo fill in client ip, user-agent and host
      */
     public static function createFor(Response $response, VBUser $user, $ip_check, $cookie_prefix)
     {
@@ -39,7 +39,7 @@ class VBSession
         $session->userId = $user->id;
         $session->clientIp = '';
         $session->host = '';
-        $session->userAgent = $response->headers->get('User-Agent');
+        $session->userAgent = '';
         $session->location = self::LOCATION;
         $session->lastActivity = time();
         $session->loggedIn = 2;
