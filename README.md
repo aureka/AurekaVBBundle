@@ -2,7 +2,7 @@ AurekaVBulletinBundle
 =====================
 [![Build Status](https://travis-ci.org/aureka/AurekaVBBundle.png)](https://travis-ci.org/aureka/AurekaVBBundle)
 
-Integrates vbulletin with a Symfony application
+Integrates vbulletin with a Symfony application, providing a Single Sign In. Any user logging into a Symfony application will automatically log into vBulletin.
 
 ## Installation
 
