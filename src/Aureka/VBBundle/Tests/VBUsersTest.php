@@ -4,8 +4,6 @@ namespace Aureka\VBBundle\Tests;
 
 use Aureka\VBBundle\VBUsers,
     Aureka\VBBundle\VBUser;
-use Symfony\Component\HttpFoundation\Response,
-    Symfony\Component\HttpFoundation\Cookie;
 
 class VBUsersTest extends \PHPUnit_Framework_TestCase
 {
