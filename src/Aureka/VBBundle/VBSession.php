@@ -49,11 +49,11 @@ class VBSession
     {
         $this->initialize($user, $response);
         $now = time();
-        $this->setCookie('sessionhash', $this->sessionHash);
-        $this->setCookie('lastvisit', $now);
-        $this->setCookie('lastactivity', $now);
-        $this->setCookie('userid', $this->userId);
-        $this->setCookie('password', md5($user->password.$this->config->license));
+        $this->setCookie($response, 'sessionhash', $this->sessionHash);
+        $this->setCookie($response, 'lastvisit', $now);
+        $this->setCookie($response, 'lastactivity', $now);
+        $this->setCookie($response, 'userid', $this->userId);
+        $this->setCookie($response, 'password', md5($user->password.$this->config->license));
         return $this;
     }
 
@@ -73,28 +73,10 @@ class VBSession
     }
 
 
-    public function hasCookie($cookie_name)
-    {
-        return null !== $this->getCookie($cookie_name);
-    }
-
-
-    public function getCookie($cookie_name)
-    {
-        $cookies = $this->headers->getCookies();
-        foreach ($cookies as $cookie) {
-            if ($cookie->getName() == $this->prefix($cookie_name)) {
-                return $cookie->getValue();
-            }
-        }
-        return null;
-    }
-
-
-    public function setCookie($cookie_name, $value)
+    private function setCookie(Response $response, $cookie_name, $value)
     {
         $cookie = new Cookie($this->prefix($cookie_name), $value, 0, '/', null, false, false);
-        return $this->headers->setCookie($cookie);
+        return $response->headers->setCookie($cookie);
     }
 
 
