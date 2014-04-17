@@ -37,7 +37,7 @@ You must add some vBulletin settings in your `config.yml`.
 
 
 ```yaml
-aureka_cmf:
+aureka_vb:
     license: YOURLICENSEGOESHERE # can be found in functions.php
     default_user_group: 2 #optional
     ip_check: 1 #optional
