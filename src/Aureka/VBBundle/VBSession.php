@@ -62,10 +62,10 @@ class VBSession
     private function initialize(VBUser $user, Response $response)
     {
         $this->userId = $user->id;
-        $this->host = $this->request->getHost();
+        $this->host = $this->request->server->get('SERVER_ADDR');
         $ip = implode('.', array_slice(explode('.', $this->request->getClientIp()), 0, 4-$this->config->ipCheck));
         $this->userAgent = $this->request->headers->get('User-Agent');
-        $this->hashId = md5($this->userAgent, $ip);
+        $this->hashId = md5($this->userAgent.$ip);
         $this->location = self::LOCATION;
         $this->lastActivity = time();
         $this->loggedIn = 2;
