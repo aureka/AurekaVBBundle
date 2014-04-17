@@ -2,6 +2,7 @@
     "name": "aureka/vb-bundle",
     "type": "symfony-bundle",
     "version": "0.0.1",
+    "license": "Apache2",
     "description": "Integrates vBulletin with Symfony applications",
     "authors": [
         {
