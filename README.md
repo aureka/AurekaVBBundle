@@ -41,7 +41,7 @@ aureka_vb:
     license: 'YOURLICENSEGOESHERE' # can be found in functions.php
     default_user_group: 2 #optional
     ip_check: 1 #optional
-    cookie_prefix: 'vb_' #optional
+    cookie_prefix: 'bb_' #optional
     database:
         driver: 'pdo_mysql'
         host: 'localhost'
