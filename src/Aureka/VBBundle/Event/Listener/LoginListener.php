@@ -3,7 +3,8 @@
 namespace Aureka\VBBundle\Event\Listener;
 
 use Aureka\VBBundle\VBUsers,
-    Aureka\VBBundle\VBConfiguration;
+    Aureka\VBBundle\VBConfiguration,
+    Aureka\VBBundle\VBSession;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -14,21 +15,24 @@ class LoginListener
 {
 
     private $repository;
-    private $requestStack;
+    private $session;
 
     private $justLoggedIn;
 
 
-    public function __construct(VBUsers $repository, RequestStack $request_stack)
+    public function __construct(VBUsers $repository, VBSession $session)
     {
         $this->repository = $repository;
-        $this->requestStack = $request_stack;
+        $this->session = $session;
     }
 
 
     public static function createFor(VBConfiguration $config, RequestStack $request_stack)
     {
-        return new static(VBUsers::createFor($config), $request_stack);
+        $request = $request_stack->getMasterRequest() ?: new Request();
+        $session = new VBSession($request, $config);
+        $repository = new VBUsers($config->createDB());
+        return new static($repository, $session);
     }
 
 
@@ -44,9 +48,9 @@ class LoginListener
     public function onKernelResponse(FilterResponseEvent $event)
     {
         if (!is_null($this->justLoggedIn)) {
-            $this->repository->login($this->justLoggedIn, $event->getResponse());
+            $this->session->login($this->justLoggedIn, $event->getResponse());
+            $this->repository->updateUserSession($this->justLoggedIn, $this->session);
             $this->justLoggedIn = null;
         }
     }
-
 }

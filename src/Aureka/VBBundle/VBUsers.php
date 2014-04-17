@@ -2,28 +2,16 @@
 
 namespace Aureka\VBBundle;
 
-use Symfony\Component\HttpFoundation\Response;
 
 class VBUsers
 {
 
     private $db;
-    private $cookiePrefix;
-    private $ipCheck;
-    private $license;
 
 
-    public function __construct(VBDatabase $db, $cookie_prefix, $ip_check, $license)
+    public function __construct(VBDatabase $db)
     {
         $this->db = $db;
-        $this->cookiePrefix = $cookie_prefix;
-        $this->ipCheck = $ip_check;
-    }
-
-
-    public static function createFor(VBConfiguration $config)
-    {
-        return new static($config->createDB(), $config->cookiePrefix, $config->ipCheck, $config->license);
     }
 
 
@@ -48,14 +36,10 @@ class VBUsers
     }
 
 
-    public function login(VBUser $user, Response $response)
+    public function updateUserSession(VBUser $user, VBSession $session)
     {
-        $session = VBSession::createFor($response, $user, $this->ipCheck, $this->cookiePrefix, $this->license );
-        if ($current_hash = $session->getCookie('sessionhash')) {
-            $this->db->delete('session', array('sessionhash' => $current_hash));
-        }
+        $this->db->delete('session', array('userid' => $user->id));
         $this->db->insert('session', $session->toArray());
-        $session->login($user);
         return $this;
     }
 }

@@ -50,45 +50,22 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itDeletesTheSessionWhenLoggingIn()
+    public function itUpdatesAUserSession()
     {
-        $response = new Response;
         $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
-        $response->headers->setCookie(new Cookie('vb_session_sessionhash', 'SomeHash'));
+        $session = $this->getMockBuilder('Aureka\VBBundle\VBSession')->disableOriginalConstructor()->getMock();
+        $session->expects($this->any())
+            ->method('toArray')
+            ->will($this->returnValue(array()));
 
         $this->db->expects($this->once())
             ->method('delete')
-            ->with('session', array('sessionhash' => 'SomeHash'));
-
-        $this->users->login($user, $response);
-    }
-
-
-    /**
-     * @test
-     */
-    public function itStoresANewSessionHashWhenLoggingIn()
-    {
-        $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
-
+            ->with('session', array('userid' => 1));
         $this->db->expects($this->once())
-            ->method('insert');
+            ->method('insert')
+            ->with('session', array());
 
-        $this->users->login($user, new Response);
-    }
-
-
-    /**
-     * @test
-     */
-    public function itCreatesACookieWhenLoggingIn()
-    {
-        $response = new Response;
-        $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
-
-        $this->users->login($user, $response);
-
-        $this->assertNotEmpty($response->headers->getCookies());
+        $this->users->updateUserSession($user, $session);
     }
 
 }

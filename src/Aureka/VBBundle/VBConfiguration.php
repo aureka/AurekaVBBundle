@@ -8,6 +8,7 @@ class VBConfiguration
     public $license;
     public $defaultUserGroup;
     public $cookiePrefix;
+    public $ipCheck;
     public $dbDriver;
     public $dbHost;
     public $dbName;
