@@ -38,16 +38,16 @@ You must add some vBulletin settings in your `config.yml`.
 
 ```yaml
 aureka_vb:
-    license: YOURLICENSEGOESHERE # can be found in functions.php
+    license: 'YOURLICENSEGOESHERE' # can be found in functions.php
     default_user_group: 2 #optional
     ip_check: 1 #optional
     cookie_prefix: 'vb_' #optional
     database:
-        driver: pdo_mysql
-        host: localhost
-        name: vb_database_name
+        driver: 'pdo_mysql'
+        host: 'localhost'
+        name: 'vb_database_name'
         port: null
-        user: vb_database_user
-        password: vb_database_password
-        table_prefix: vb3_ #optional
+        user: 'vb_database_user'
+        password: 'vb_database_password'
+        table_prefix: 'vb3_' #optional
 ```
