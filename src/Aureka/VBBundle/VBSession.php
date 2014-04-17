@@ -17,6 +17,7 @@ class VBSession
     private $userId;
     private $hashId;
     private $host;
+    private $userAgent;
     private $location;
     private $lastActivity;
     private $loggedIn;
@@ -63,8 +64,8 @@ class VBSession
         $this->userId = $user->id;
         $this->host = $this->request->getHost();
         $ip = implode('.', array_slice(explode('.', $this->request->getClientIp()), 0, 4-$this->config->ipCheck));
-        $user_agent = $this->request->headers->get('User-Agent');
-        $this->hashId = md5($user_agent, $ip);
+        $this->userAgent = $this->request->headers->get('User-Agent');
+        $this->hashId = md5($this->userAgent, $ip);
         $this->location = self::LOCATION;
         $this->lastActivity = time();
         $this->loggedIn = 2;
