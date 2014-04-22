@@ -2,25 +2,65 @@
 
 namespace Aureka\VBBundle;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class VBUser
 {
 
     const DEFAULT_GROUP = 2;
 
-    public $id;
-    public $username;
-    public $password;
+    private $username;
+    private $password;
+    private $id;
 
+    private $session;
 
-    public function __construct($id, $username, $password)
+    public function __construct($username, $password = null, $id = null)
     {
-        $this->id = $id;
         $this->username = $username;
         $this->password = $password;
+        $this->id = $id;
     }
 
-    public static function fromArray(array $data)
+
+    public function getId()
     {
-        return new static($data['userid'], $data['username'], $data['password']);
+        return $this->id;
+    }
+
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+
+    public function setSession(VBSession $session)
+    {
+        $session->setUser($this);
+        $this->session = $session;
+        return $this;
+    }
+
+
+    public function export()
+    {
+        return array(
+            'userid' => $this->id,
+            'username' => $this->username,
+            'password' => $this->password
+            );
+    }
+
+
+    public function login(Response $response)
+    {
+        $this->session->login($response);
     }
 }

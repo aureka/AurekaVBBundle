@@ -15,45 +15,44 @@ use Symfony\Component\HttpFoundation\Request;
 class LoginListener
 {
 
-    private $repository;
+    private $userProvider;
     private $session;
-    private $db;
 
-    private $justLoggedIn;
+    private $userToLogIn;
 
 
-    public function __construct(VBUsers $repository, VBSession $session, VBDatabase $db)
+    public function __construct(VBUsers $user_provider, VBSession $session)
     {
-        $this->repository = $repository;
+        $this->userProvider = $user_provider;
         $this->session = $session;
-        $this->db = $db;
     }
 
 
     public static function createFor(VBConfiguration $config, RequestStack $request_stack)
     {
+        $user_provider = new VBUsers($config->createDB());
         $request = $request_stack->getMasterRequest() ?: new Request();
-        $db = $config->createDB();
-        $session = new VBSession($request, $config);
-        $repository = new VBUsers($db);
-        return new static($repository, $session, $db);
+        return new static($user_provider, $config->createSession($request));
     }
 
 
     public function onUserLogin(AuthenticationEvent $event)
     {
         $username = $event->getAuthenticationToken()->getUsername();
-        $this->repository->connect();
-        $user = $this->repository->load($username) ?: $this->repository->create($username);
-        $this->justLoggedIn = $user;
+        $user = $this->userProvider->load($this->session, $username);
+        if (!$user) {
+            $user = $this->userProvider->create($this->session, $username);
+        }
+        $this->userToLogIn = $user;
     }
 
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if (!is_null($this->justLoggedIn)) {
-            $this->session->login($this->justLoggedIn, $event->getResponse(), $this->db);
-            $this->justLoggedIn = null;
+        if (!is_null($this->userToLogIn)) {
+            $this->userToLogIn->login($event->getResponse());
+            $this->userProvider->updateSession($this->session);
+            $this->userToLogIn = null;
         }
     }
 }

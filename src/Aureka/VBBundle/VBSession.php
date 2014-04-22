@@ -16,8 +16,8 @@ class VBSession
 
     private $request;
     private $config;
+    private $user;
 
-    private $userId;
     private $hashId;
     private $host;
     private $userAgent;
@@ -34,36 +34,37 @@ class VBSession
     }
 
 
-    public function login(VBUser $user, Response $response, VBDatabase $db)
+    public function getId()
     {
-        $this->initialize($user, $response);
-        $this->refresh($db);
+        return $this->hashId;
+    }
+
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+
+    public function login(Response $response)
+    {
+        $this->initialize($response);
         $now = time();
         $this->setCookie($response, 'sessionhash', $this->sessionHash);
         $this->setCookie($response, 'lastvisit', $now);
         $this->setCookie($response, 'lastactivity', $now);
-        $this->setCookie($response, 'userid', $this->userId);
-        $this->setCookie($response, 'password', md5($user->password.$this->config->license));
+        $this->setCookie($response, 'userid', $this->user->getId());
+        $this->setCookie($response, 'password', md5($this->user->getPassword().$this->config->license));
         return $this;
     }
 
 
-    private function refresh(VBDatabase $db)
-    {
-        if (is_null($this->hashId)) {
-            throw new VBSessionException('Unable to refresh a session that is not initialized');
-        }
-        $db->delete('session', array('idhash' => $this->hashId));
-        $db->insert('session', $this->toArray());
-        return $this;
-    }
-
-
-    private function toArray()
+    public function export()
     {
         return array(
             'sessionhash' => $this->sessionHash,
-            'userid' => $this->userId,
+            'userid' => $this->user->getId(),
             'host' => $this->host,
             'idhash' => $this->hashId,
             'lastactivity' => $this->lastActivity,
@@ -74,9 +75,8 @@ class VBSession
     }
 
 
-    private function initialize(VBUser $user, Response $response)
+    private function initialize(Response $response)
     {
-        $this->userId = $user->id;
         $this->host = $this->request->server->get('SERVER_ADDR');
         $ip = implode('.', array_slice(explode('.', $this->request->getClientIp()), 0, 4-$this->config->ipCheck));
         $this->userAgent = $this->request->headers->get('User-Agent');
@@ -98,7 +98,7 @@ class VBSession
 
     private function createSessionHash()
     {
-        return md5('/forum/' . $this->hashId . uniqid());
+        return md5(self::LOCATION . $this->hashId . uniqid());
     }
 
 

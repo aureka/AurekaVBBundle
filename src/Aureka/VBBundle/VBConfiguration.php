@@ -2,6 +2,9 @@
 
 namespace Aureka\VBBundle;
 
+use Symfony\Component\HttpFoundation\Request;
+
+
 class VBConfiguration
 {
 
@@ -57,5 +60,10 @@ class VBConfiguration
         return new VBDatabase($db_params, $this->dbPrefix);
     }
 
+
+    public function createSession(Request $request)
+    {
+        return new VBSession($request, $this);
+    }
 
 }

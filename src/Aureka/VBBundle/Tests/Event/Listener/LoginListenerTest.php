@@ -14,15 +14,14 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
 {
 
     private $listener;
+    private $provider;
     private $session;
-    private $db;
 
     public function setUp()
     {
-        $this->repository = $this->getMockBuilder('Aureka\VBBundle\VBUsers')->disableOriginalConstructor()->getMock();
+        $this->provider = $this->getMockBuilder('Aureka\VBBundle\VBUsers')->disableOriginalConstructor()->getMock();
         $this->session = $this->getMockBuilder('Aureka\VBBundle\VBSession')->disableOriginalConstructor()->getMock();
-        $this->db = $this->getMockBuilder('Aureka\VBBundle\VBDatabase')->disableOriginalConstructor()->getMock();
-        $this->listener = new LoginListener($this->repository, $this->session, $this->db);
+        $this->listener = new LoginListener($this->provider, $this->session);
     }
 
 
@@ -34,9 +33,9 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->mockVBUsers(array('load' => false, 'create' => $this->aUser()));
         $event = $this->getAuthenticationEventForUser('test_username');
 
-        $this->repository->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('create')
-            ->with('test_username');
+            ->with($this->session, 'test_username');
 
         $this->listener->onUserLogin($event);
     }
@@ -50,7 +49,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->mockVBUsers(array('load' => $this->aUser()));
         $event = $this->getAuthenticationEventForUser('test_username');
 
-        $this->repository->expects($this->never())
+        $this->provider->expects($this->never())
             ->method('create');
 
         $this->listener->onUserLogin($event);
@@ -67,9 +66,28 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
         $authentication_event = $this->getAuthenticationEventForUser('test_username');
         $response_event = $this->getResponseEvent();
 
-        $this->session->expects($this->once())
+        $user->expects($this->once())
             ->method('login')
-            ->with($user);
+            ->with($response_event->getResponse());
+
+        $this->listener->onUserLogin($authentication_event);
+        $this->listener->onKernelResponse($response_event);
+    }
+
+
+    /**
+     * @test
+     */
+    public function itUpdatesTheDatabaseSessionWhenLogginIn()
+    {
+        $user = $this->aUser();
+        $vb_bridge = $this->mockVBUsers(array('load' => $user));
+        $authentication_event = $this->getAuthenticationEventForUser('test_username');
+        $response_event = $this->getResponseEvent();
+
+        $this->provider->expects($this->once())
+            ->method('updateSession')
+            ->with($this->session);
 
         $this->listener->onUserLogin($authentication_event);
         $this->listener->onKernelResponse($response_event);
@@ -98,7 +116,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
     private function mockVBUsers(array $stubs = array())
     {
         foreach ($stubs as $method => $return_value) {
-            $this->repository->expects($this->any())
+            $this->provider->expects($this->any())
                 ->method($method)
                 ->will($this->returnValue($return_value));
         }
@@ -109,4 +127,5 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
     {
         return $this->getMockBuilder('Aureka\VBBundle\VBUser')->disableOriginalConstructor()->getMock();
     }
+
 }
