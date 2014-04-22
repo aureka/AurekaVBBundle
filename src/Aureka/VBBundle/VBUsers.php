@@ -2,7 +2,8 @@
 
 namespace Aureka\VBBundle;
 
-use Aureka\VBBundle\Exception\VBUserException;
+use Aureka\VBBundle\Exception\VBUserException,
+    Aureka\VBBundle\Exception\VBSessionException;
 
 
 class VBUsers

@@ -2,8 +2,7 @@
 
 namespace Aureka\VBBundle;
 
-use Doctrine\DBAL\Connection,
-    Doctrine\DBAL\Configuration,
+use Doctrine\DBAL\Configuration,
     Doctrine\DBAL\DriverManager;
 
 

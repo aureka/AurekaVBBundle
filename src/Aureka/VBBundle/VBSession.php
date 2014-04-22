@@ -6,8 +6,6 @@ use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response,
     Symfony\Component\HttpFoundation\Cookie;
 
-use Aureka\VBBundle\Exception\VBSessionException;
-
 class VBSession
 {
 
