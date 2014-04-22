@@ -30,9 +30,10 @@ class VBSessionTest extends \PHPUnit_Framework_TestCase
     public function itSetsTheProperSessionCookiesWhenLoggingIn()
     {
         $user = $this->aDoubleOf('Aureka\VBBundle\VBUser');
+        $db = $this->aDoubleOf('Aureka\VBBundle\VBDatabase');
         $response = new Response();
 
-        $this->session->login($user, $response);
+        $this->session->login($user, $response, $db);
 
         $this->assertCookieExists('sessionhash', $response);
         $this->assertCookieExists('lastvisit', $response);
@@ -45,15 +46,19 @@ class VBSessionTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itCanBeConvertedToAnArray()
+    public function itRefreshesTheSessionInTheDatabaseWhenLogginIn()
     {
         $user = $this->aDoubleOf('Aureka\VBBundle\VBUser');
         $response = new Response();
+        $db = $this->getMockBuilder('Aureka\VBBundle\VBDatabase')->disableOriginalConstructor()->getMock();
 
-        $this->session->login($user, $response);
 
-        $session = $this->session->toArray();
-        $this->assertNotEmpty($session);
+        $db->expects($this->once())
+            ->method('delete');
+        $db->expects($this->once())
+            ->method('insert');
+
+        $this->session->login($user, $response, $db);
     }
 
 

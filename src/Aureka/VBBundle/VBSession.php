@@ -6,10 +6,13 @@ use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response,
     Symfony\Component\HttpFoundation\Cookie;
 
+use Aureka\VBBundle\Exception\VBSessionException;
+
 class VBSession
 {
 
     const LOCATION = '/forum/';
+    const INITIAL_LOGIN_STATUS = 2;
 
     private $request;
     private $config;
@@ -31,7 +34,32 @@ class VBSession
     }
 
 
-    public function toArray()
+    public function login(VBUser $user, Response $response, VBDatabase $db)
+    {
+        $this->initialize($user, $response);
+        $this->refresh($db);
+        $now = time();
+        $this->setCookie($response, 'sessionhash', $this->sessionHash);
+        $this->setCookie($response, 'lastvisit', $now);
+        $this->setCookie($response, 'lastactivity', $now);
+        $this->setCookie($response, 'userid', $this->userId);
+        $this->setCookie($response, 'password', md5($user->password.$this->config->license));
+        return $this;
+    }
+
+
+    private function refresh(VBDatabase $db)
+    {
+        if (is_null($this->hashId)) {
+            throw new VBSessionException('Unable to refresh a session that is not initialized');
+        }
+        $db->delete('session', array('idhash' => $this->hashId));
+        $db->insert('session', $this->toArray());
+        return $this;
+    }
+
+
+    private function toArray()
     {
         return array(
             'sessionhash' => $this->sessionHash,
@@ -46,19 +74,6 @@ class VBSession
     }
 
 
-    public function login(VBUser $user, Response $response)
-    {
-        $this->initialize($user, $response);
-        $now = time();
-        $this->setCookie($response, 'sessionhash', $this->sessionHash);
-        $this->setCookie($response, 'lastvisit', $now);
-        $this->setCookie($response, 'lastactivity', $now);
-        $this->setCookie($response, 'userid', $this->userId);
-        $this->setCookie($response, 'password', md5($user->password.$this->config->license));
-        return $this;
-    }
-
-
     private function initialize(VBUser $user, Response $response)
     {
         $this->userId = $user->id;
@@ -68,7 +83,7 @@ class VBSession
         $this->hashId = md5($this->userAgent.$ip);
         $this->location = self::LOCATION;
         $this->lastActivity = time();
-        $this->loggedIn = 2;
+        $this->loggedIn = self::INITIAL_LOGIN_STATUS;
         $this->sessionHash = $this->createSessionHash();
         return $this;
     }
@@ -83,18 +98,7 @@ class VBSession
 
     private function createSessionHash()
     {
-        return md5('/forum/' . $this->hashId . $this->randomPassword(6));
-    }
-
-
-    private function randomPassword($length = 10)
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $randomPassword = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomPassword .= $characters[rand(0, strlen($characters) - 1)];
-        }
-        return $randomPassword;
+        return md5('/forum/' . $this->hashId . uniqid());
     }
 
 

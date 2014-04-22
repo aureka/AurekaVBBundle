@@ -38,9 +38,7 @@ class VBUsers
 
     public function updateSession(VBSession $session)
     {
-        $session_data = $session->toArray();
-        $this->db->delete('session', array('idhash' => $session_data['idhash']));
-        $this->db->insert('session', $session_data);
+        $session->refresh($this->db);
         return $this;
     }
 }
