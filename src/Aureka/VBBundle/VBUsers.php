@@ -28,6 +28,7 @@ class VBUsers
 
     public function load(VBSession $session, $username)
     {
+        $this->db->connect();
         $data = $this->db->load('user', array('username' => $username));
         if (!$data) {
             throw new VBUserException(sprintf('Unable to load data for user with username %s', $username));
@@ -38,6 +39,7 @@ class VBUsers
 
     public function persist(VBUser $user)
     {
+        $this->db->connect();
         $this->db->insert('user', $user->export());
         return $this;
     }
@@ -48,6 +50,7 @@ class VBUsers
         if (is_null($session->getId())) {
             throw new VBSessionException('Unable to update a session that is not initialized');
         }
+        $this->db->connect();
         $this->db->delete('session', array('idhash' => $session->getId()));
         $this->db->insert('session', $session->export());
         return $this;
