@@ -49,7 +49,7 @@ class LoginListener
     {
         if (!is_null($this->justLoggedIn)) {
             $this->session->login($this->justLoggedIn, $event->getResponse());
-            $this->repository->updateUserSession($this->justLoggedIn, $this->session);
+            $this->repository->updateSession($this->session);
             $this->justLoggedIn = null;
         }
     }

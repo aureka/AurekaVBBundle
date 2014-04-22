@@ -36,10 +36,11 @@ class VBUsers
     }
 
 
-    public function updateUserSession(VBUser $user, VBSession $session)
+    public function updateSession(VBSession $session)
     {
-        $this->db->delete('session', array('userid' => $user->id));
-        $this->db->insert('session', $session->toArray());
+        $session_data = $session->toArray();
+        $this->db->delete('session', array('idhash' => $session_data['idhash']));
+        $this->db->insert('session', $session_data);
         return $this;
     }
 }

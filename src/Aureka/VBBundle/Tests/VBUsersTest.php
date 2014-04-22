@@ -50,20 +50,19 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itUpdatesAUserSession()
     {
-        $user = VBUser::fromArray(array('userid' => 1, 'username' => 'some_name', 'password' => ''));
         $session = $this->getMockBuilder('Aureka\VBBundle\VBSession')->disableOriginalConstructor()->getMock();
         $session->expects($this->any())
             ->method('toArray')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue(array('idhash' => 'SomeSessionId')));
 
         $this->db->expects($this->once())
             ->method('delete')
-            ->with('session', array('userid' => 1));
+            ->with('session', array('idhash' => 'SomeSessionId'));
         $this->db->expects($this->once())
             ->method('insert')
-            ->with('session', array());
+            ->with('session', array('idhash' => 'SomeSessionId'));
 
-        $this->users->updateUserSession($user, $session);
+        $this->users->updateSession($session);
     }
 
 }
