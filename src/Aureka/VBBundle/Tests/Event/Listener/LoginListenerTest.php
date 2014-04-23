@@ -100,9 +100,13 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
     private function getAuthenticationEventForUser($username)
     {
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())
+        $user = $this->getMock('User', array('getUsername', 'getPassword', 'getId'));
+        $user->expects($this->any())
             ->method('getUsername')
-            ->will($this->returnValue('test_username'));
+            ->will($this->returnValue($username));
+        $token->expects($this->any())
+            ->method('getUser')
+            ->will($this->returnValue($user));
         return new AuthenticationEvent($token);
     }
 

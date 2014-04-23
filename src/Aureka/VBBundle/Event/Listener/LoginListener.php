@@ -38,11 +38,11 @@ class LoginListener
 
     public function onUserLogin(AuthenticationEvent $event)
     {
-        $username = $event->getAuthenticationToken()->getUsername();
+        $user = $event->getAuthenticationToken()->getUser();
         try {
-            $this->userToLogIn = $this->userProvider->load($this->session, $username);
+            $this->userToLogIn = $this->userProvider->load($this->session, $user->getUsername());
         } catch (VBUserException $e) {
-            $this->userToLogIn = $this->userProvider->create($this->session, $username);
+            $this->userToLogIn = $this->userProvider->create($this->session, $user->getUsername(), $user->getPassword(), $user->getId());
         }
     }
 
