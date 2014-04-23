@@ -51,11 +51,14 @@ class VBUser
 
     public function export()
     {
-        return array(
-            'userid' => $this->id,
+        $data = array(
             'username' => $this->username,
             'password' => $this->password
             );
+        if ($this->id) {
+            $data['userid'] = $this->id;
+        }
+        return $data;
     }
 
 
