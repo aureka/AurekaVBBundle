@@ -2,12 +2,11 @@
 
 namespace Aureka\VBBundle\Tests\Event\Listener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\AuthenticationEvents,
-    Symfony\Component\Security\Core\Event\AuthenticationEvent;
+use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\HttpFoundation\Response;
 
 use Aureka\VBBundle\Event\Listener\LoginListener;
+use Aureka\VBBundle\Exception\VBUserException;
 
 
 class LoginListenerTest extends \PHPUnit_Framework_TestCase
@@ -32,6 +31,10 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockVBUsers(array('load' => false, 'create' => $this->aUser()));
         $event = $this->getAuthenticationEventForUser('test_username');
+        $this->provider->expects($this->any())
+            ->method('load')
+            ->with($this->session, 'test_username')
+            ->will($this->throwException(new VBUserException));
 
         $this->provider->expects($this->once())
             ->method('create')

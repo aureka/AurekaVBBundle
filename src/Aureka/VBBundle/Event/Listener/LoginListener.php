@@ -4,12 +4,12 @@ namespace Aureka\VBBundle\Event\Listener;
 
 use Aureka\VBBundle\VBUsers,
     Aureka\VBBundle\VBConfiguration,
-    Aureka\VBBundle\VBDatabase,
     Aureka\VBBundle\VBSession;
+use Aureka\VBBundle\Exception\VBUserException;
+
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
-
 use Symfony\Component\HttpFoundation\Request;
 
 class LoginListener
@@ -39,11 +39,11 @@ class LoginListener
     public function onUserLogin(AuthenticationEvent $event)
     {
         $username = $event->getAuthenticationToken()->getUsername();
-        $user = $this->userProvider->load($this->session, $username);
-        if (!$user) {
-            $user = $this->userProvider->create($this->session, $username);
+        try {
+            $this->userToLogIn = $this->userProvider->load($this->session, $username);
+        } catch (VBUserException $e) {
+            $this->userToLogIn = $this->userProvider->create($this->session, $username);
         }
-        $this->userToLogIn = $user;
     }
 
 
