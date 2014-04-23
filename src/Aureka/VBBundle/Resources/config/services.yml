@@ -1,9 +1,5 @@
 # Service definitions
 parameters:
-    aureka_vb.cookie_prefix: ''
-    aureka_vb.db_prefix: 'vb3_'
-    aureka_vb.ip_check: 1
-    aureka_vb.database: []
 
 services:
     aureka_vb.login_listener:
