@@ -10,3 +10,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    aureka_vb.logout_handler:
+        class: Aureka\VBBundle\Handler\LogoutHandler
+        factory_class: Aureka\VBBundle\Handler\LogoutHandler
+        factory_method: createFor
+        arguments: ['@aureka_vb.configuration', '@request_stack']
+        tags:
+            - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }

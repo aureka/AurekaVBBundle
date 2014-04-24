@@ -57,6 +57,11 @@ class VBSession
         return $this;
     }
 
+    public function logout(Response $response)
+    {
+        return $this;
+    }
+
 
     public function export()
     {

@@ -50,7 +50,7 @@ class LoginListener
     public function onKernelResponse(FilterResponseEvent $event)
     {
         if (!is_null($this->userToLogIn)) {
-            $this->userToLogIn->login($event->getResponse());
+            $this->session->login($event->getResponse());
             $this->userProvider->updateSession($this->session);
             $this->userToLogIn = null;
         }

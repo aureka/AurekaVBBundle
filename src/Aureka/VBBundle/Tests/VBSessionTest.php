@@ -29,7 +29,6 @@ class VBSessionTest extends \PHPUnit_Framework_TestCase
      */
     public function itSetsTheProperSessionCookiesWhenLoggingIn()
     {
-        $db = $this->aDoubleOf('Aureka\VBBundle\VBDatabase');
         $response = new Response();
         $this->session->setUser($this->aDoubleOf('Aureka\VBBundle\VBUser'));
 
@@ -40,6 +39,23 @@ class VBSessionTest extends \PHPUnit_Framework_TestCase
         $this->assertCookieExists('lastactivity', $response);
         $this->assertCookieExists('userid', $response);
         $this->assertCookieExists('password', $response);
+    }
+
+
+    /**
+     * @test
+     */
+    public function itRemovesSessionCookiesWhenLoggingOut()
+    {
+        $response = new Response();
+
+        $this->session->logout($response);
+
+        $this->assertCookieDoesNotExist('sessionhash', $response);
+        $this->assertCookieDoesNotExist('lastvisit', $response);
+        $this->assertCookieDoesNotExist('lastactivity', $response);
+        $this->assertCookieDoesNotExist('userid', $response);
+        $this->assertCookieDoesNotExist('password', $response);
     }
 
 
@@ -57,5 +73,15 @@ class VBSessionTest extends \PHPUnit_Framework_TestCase
             }
         }
         return $this->fail(sprintf('The cookie %s was not found in the response object.', $cookie_name));
+    }
+
+    private function assertCookieDoesNotExist($cookie_name, Response $response)
+    {
+        foreach ($response->headers->getCookies() as $cookie) {
+            if ($cookie->getName() === $cookie_name) {
+                $this->fail(sprintf('The cookie %s was not supposed to be found in the response object.', $cookie_name));
+            }
+        }
+        return;
     }
 }

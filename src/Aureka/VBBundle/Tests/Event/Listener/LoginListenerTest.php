@@ -64,12 +64,11 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function itPerformsTheLoginInVbulletin()
     {
-        $user = $this->aUser();
-        $vb_bridge = $this->mockVBUsers(array('load' => $user));
+        $vb_bridge = $this->mockVBUsers(array('load' => $this->aUser()));
         $authentication_event = $this->getAuthenticationEventForUser('test_username');
         $response_event = $this->getResponseEvent();
 
-        $user->expects($this->once())
+        $this->session->expects($this->once())
             ->method('login')
             ->with($response_event->getResponse());
 

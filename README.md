@@ -51,3 +51,17 @@ aureka_vb:
         password: 'vb_database_password'
         table_prefix: 'vb3_' #optional
 ```
+
+## Automatic logout
+
+In order to logout users from vbulletin, add the following lines to your `security.yml`:
+
+```yaml
+security:
+    # ...
+    firewalls:
+        main:
+            # ...
+            logout:
+                handlers: [aureka_vb.logout_handler]
+```

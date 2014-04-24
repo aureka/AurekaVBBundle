@@ -50,9 +50,19 @@ class VBUsers
         if (is_null($session->getId())) {
             throw new VBSessionException('Unable to update a session that is not initialized');
         }
+        $this->removeSession($session);
+        $this->db->insert('session', $session->export());
+        return $this;
+    }
+
+
+    public function removeSession(VBSession $session)
+    {
+        if (is_null($session->getId())) {
+            throw new VBSessionException('Unable to delete a session that is not initialized');
+        }
         $this->db->connect();
         $this->db->delete('session', array('idhash' => $session->getId()));
-        $this->db->insert('session', $session->export());
         return $this;
     }
 }

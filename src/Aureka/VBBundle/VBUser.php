@@ -61,9 +61,4 @@ class VBUser
         return $data;
     }
 
-
-    public function login(Response $response)
-    {
-        $this->session->login($response);
-    }
 }
