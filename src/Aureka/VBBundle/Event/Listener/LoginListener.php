@@ -3,14 +3,11 @@
 namespace Aureka\VBBundle\Event\Listener;
 
 use Aureka\VBBundle\VBUsers,
-    Aureka\VBBundle\VBConfiguration,
     Aureka\VBBundle\VBSession;
 use Aureka\VBBundle\Exception\VBUserException;
 
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Request;
 
 class LoginListener
 {
@@ -25,14 +22,6 @@ class LoginListener
     {
         $this->userProvider = $user_provider;
         $this->session = $session;
-    }
-
-
-    public static function createFor(VBConfiguration $config, RequestStack $request_stack)
-    {
-        $user_provider = new VBUsers($config->createDB());
-        $request = $request_stack->getMasterRequest() ?: new Request();
-        return new static($user_provider, $config->createSession($request));
     }
 
 

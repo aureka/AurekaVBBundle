@@ -4,8 +4,8 @@ parameters:
 services:
     aureka_vb.login_listener:
         class: Aureka\VBBundle\Event\Listener\LoginListener
-        factory_class: Aureka\VBBundle\Event\Listener\LoginListener
-        factory_method: createFor
+        factory_class: Aureka\VBBundle\Factory\ServicesFactory
+        factory_method: createLogin
         arguments: ['@aureka_vb.configuration', '@request_stack']
         tags:
             - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
@@ -13,8 +13,8 @@ services:
 
     aureka_vb.logout_handler:
         class: Aureka\VBBundle\Handler\LogoutHandler
-        factory_class: Aureka\VBBundle\Handler\LogoutHandler
-        factory_method: createFor
+        factory_class: Aureka\VBBundle\Factory\ServicesFactory
+        factory_method: createLogout
         arguments: ['@aureka_vb.configuration', '@request_stack']
         tags:
             - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
