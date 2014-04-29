@@ -62,6 +62,11 @@ class VBSession
     public function logout(Response $response)
     {
         $this->initialize($response);
+        $this->removeCookie($response, 'sessionhash');
+        $this->removeCookie($response, 'lastvisit');
+        $this->removeCookie($response, 'lastactivity');
+        $this->removeCookie($response, 'userid');
+        $this->removeCookie($response, 'password');
         return $this;
     }
 
@@ -108,6 +113,13 @@ class VBSession
     {
         $cookie = new Cookie($this->prefix($cookie_name), $value, 0, '/', null, false, false);
         return $response->headers->setCookie($cookie);
+    }
+
+
+    private function removeCookie(Response $response, $cookie_name)
+    {
+        $response->headers->removeCookie($cookie_name);
+        return $this;
     }
 
 

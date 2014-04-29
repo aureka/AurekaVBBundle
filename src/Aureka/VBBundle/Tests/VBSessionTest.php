@@ -48,6 +48,8 @@ class VBSessionTest extends \PHPUnit_Framework_TestCase
     public function itRemovesSessionCookiesWhenLoggingOut()
     {
         $response = new Response();
+        $this->session->setUser($this->aDoubleOf('Aureka\VBBundle\VBUser'));
+        $this->session->login($response);
 
         $this->session->logout($response);
 
