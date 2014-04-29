@@ -16,6 +16,3 @@ services:
         factory_class: Aureka\VBBundle\Factory\ServicesFactory
         factory_method: createLogout
         arguments: ['@aureka_vb.configuration', '@request_stack']
-        tags:
-            - { name: kernel.event_listener, event: security.authentication.success, method: onUserLogin }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
