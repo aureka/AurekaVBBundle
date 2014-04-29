@@ -24,6 +24,8 @@ class VBSession
     private $loggedIn;
     private $sessionHash;
 
+    private $initialized = false;
+
 
     public function __construct(Request $request, VBConfiguration $config)
     {
@@ -59,6 +61,7 @@ class VBSession
 
     public function logout(Response $response)
     {
+        $this->initialize($response);
         return $this;
     }
 
@@ -80,15 +83,24 @@ class VBSession
 
     private function initialize(Response $response)
     {
-        $this->host = $this->request->server->get('SERVER_ADDR');
-        $ip = implode('.', array_slice(explode('.', $this->request->getClientIp()), 0, 4-$this->config->ipCheck));
-        $this->userAgent = $this->request->headers->get('User-Agent');
-        $this->hashId = md5($this->userAgent.$ip);
-        $this->location = self::LOCATION;
-        $this->lastActivity = time();
-        $this->loggedIn = self::INITIAL_LOGIN_STATUS;
-        $this->sessionHash = $this->createSessionHash();
+        if (!$this->initialized) {
+            $this->host = $this->request->server->get('SERVER_ADDR');
+            $this->userAgent = $this->request->headers->get('User-Agent');
+            $this->hashId = $this->createHashId();
+            $this->location = self::LOCATION;
+            $this->lastActivity = time();
+            $this->loggedIn = self::INITIAL_LOGIN_STATUS;
+            $this->sessionHash = $this->createSessionHash();
+            $this->initialized = true;
+        }
         return $this;
+    }
+
+
+    private function createHashId()
+    {
+        $ip = implode('.', array_slice(explode('.', $this->request->getClientIp()), 0, 4-$this->config->ipCheck));
+        return md5($this->userAgent.$ip);
     }
 
 

@@ -26,8 +26,8 @@ class LogoutHandler implements LogoutHandlerInterface
 
     public function logout(Request $request, Response $response, TokenInterface $token)
     {
-        $this->userProvider->removeSession($this->session);
         $this->session->logout($response);
+        $this->userProvider->removeSession($this->session);
         return $this;
     }
 }
