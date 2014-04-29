@@ -118,7 +118,7 @@ class VBSession
 
     private function removeCookie(Response $response, $cookie_name)
     {
-        $response->headers->removeCookie($cookie_name);
+        $this->setCookie($response, $cookie_name, null);
         return $this;
     }
 

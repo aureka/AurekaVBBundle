@@ -80,7 +80,7 @@ class VBSessionTest extends \PHPUnit_Framework_TestCase
     private function assertCookieDoesNotExist($cookie_name, Response $response)
     {
         foreach ($response->headers->getCookies() as $cookie) {
-            if ($cookie->getName() === $cookie_name) {
+            if ($cookie->getName() === $cookie_name && !is_null($cookie->getValue())) {
                 $this->fail(sprintf('The cookie %s was not supposed to be found in the response object.', $cookie_name));
             }
         }
