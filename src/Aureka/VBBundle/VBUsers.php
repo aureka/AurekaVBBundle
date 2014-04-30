@@ -18,11 +18,11 @@ class VBUsers
     }
 
 
-    public function create(VBSession $session, $username, $password = null, $id = null)
+    public function create(VBSession $session, $username, $password = null)
     {
-        $user = new VBUser($username, $password, $id);
-        $user->setSession($session);
-        return $user;
+        $this->db->connect();
+        $id = $this->db->insert('user', array('username' => $username, 'password' => $password));
+        return $this->getUserInstance($session, $username, $password, $id);
     }
 
 
@@ -33,16 +33,17 @@ class VBUsers
         if (!$data) {
             throw new VBUserException(sprintf('Unable to load data for user with username %s', $username));
         }
-        return $this->create($session, $username, $data['password'], $data['userid']);
+        return $this->getUserInstance($session, $username, $data['password'], $data['userid']);
     }
 
 
-    public function persist(VBUser $user)
+    private function getUserInstance(VBSession $session, $username, $password, $id)
     {
-        $this->db->connect();
-        $this->db->insert('user', $user->export());
-        return $this;
+        $user = new VBUser($username, $password, $id);
+        $user->setSession($session);
+        return $user;
     }
+
 
 
     public function updateSession(VBSession $session)

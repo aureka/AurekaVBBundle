@@ -31,7 +31,7 @@ class LoginListener
         try {
             $this->userToLogIn = $this->userProvider->load($this->session, $user->getUsername());
         } catch (VBUserException $e) {
-            $this->userToLogIn = $this->userProvider->create($this->session, $user->getUsername(), $user->getPassword(), $user->getId());
+            $this->userToLogIn = $this->userProvider->create($this->session, $user->getUsername(), $user->getPassword());
         }
     }
 

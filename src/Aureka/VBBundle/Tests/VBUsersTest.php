@@ -21,19 +21,16 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itPersistsUsers()
+    public function itCreatesUsers()
     {
-        $user_data = array('username' => 'some_name');
-        $user = $this->aDoubleOf('Aureka\VBBundle\VBUser');
-        $user->expects($this->any())
-            ->method('export')
-            ->will($this->returnValue($user_data));
+        $user_data = array('username' => 'some_name', 'password' => 'some_password');
+        $session = $this->aDoubleOf('Aureka\VBBundle\VBSession');
 
         $this->db->expects($this->once())
             ->method('insert')
             ->with('user', $user_data);
 
-        $this->users->persist($user);
+        $this->users->create($session, 'some_name', 'some_password');
     }
 
 

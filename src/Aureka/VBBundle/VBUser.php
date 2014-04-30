@@ -47,18 +47,4 @@ class VBUser
         $this->session = $session;
         return $this;
     }
-
-
-    public function export()
-    {
-        $data = array(
-            'username' => $this->username,
-            'password' => $this->password
-            );
-        if ($this->id) {
-            $data['userid'] = $this->id;
-        }
-        return $data;
-    }
-
 }
