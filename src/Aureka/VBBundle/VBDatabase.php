@@ -33,7 +33,8 @@ class VBDatabase
 
     public function insert($table, $fields)
     {
-        return $this->connection->insert($this->prefix($table), $fields);
+        $this->connection->insert($this->prefix($table), $fields);
+        return $this->lastInsertId();
     }
 
 
