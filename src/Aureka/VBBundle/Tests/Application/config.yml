@@ -3,6 +3,7 @@ framework:
     test:   ~
 
 aureka_vb:
+    enabled: true
     license: somelicense
     cookie_prefix: vb_
     database:

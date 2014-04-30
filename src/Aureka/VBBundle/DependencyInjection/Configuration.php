@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('aureka_vb');
         $rootNode
             ->children()
+                ->booleanNode('enabled')->defaultValue(true)->end()
                 ->scalarNode('license')->isRequired()->end()
                 ->scalarNode('default_user_group')->defaultValue(VBUser::DEFAULT_GROUP)->end()
                 ->scalarNode('ip_check')->defaultValue(1)->end()
