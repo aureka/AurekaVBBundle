@@ -53,9 +53,9 @@ aureka_vb:
         table_prefix: 'vb3_' #optional
 ```
 
-## Automatic logout
+## Automatic login/logout
 
-In order to logout users from vbulletin, add the following lines to your `security.yml`:
+In order to login/logout users from vbulletin, add the following lines to your `security.yml`:
 
 ```yaml
 security:
