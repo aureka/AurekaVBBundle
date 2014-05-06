@@ -19,7 +19,7 @@ class AurekaVBExtension extends Extension
 
         if ($config['enabled']) {
             $this->createConfigurationDefinition($container, $config);
-            $this->createLoginHandlerDefinition($container, $config);
+            $this->createLoginListenerDefinition($container, $config);
             $this->createLogoutHandlerDefinition($container, $config);
         }
     }
@@ -43,14 +43,20 @@ class AurekaVBExtension extends Extension
     }
 
 
-    private function createLoginHandlerDefinition(ContainerBuilder $container, array $config)
+    private function createLoginListenerDefinition(ContainerBuilder $container, array $config)
     {
-        $definition = new Definition('Aureka\VBBundle\Handler\LoginHandler');
+        $definition = new Definition('Aureka\VBBundle\Event\Listener\LoginListener');
         $definition->setFactoryClass('Aureka\VBBundle\Factory\ServicesFactory');
         $definition->setFactoryMethod('createLogin');
         $definition->addArgument(new Reference('aureka_vb.configuration'));
         $definition->addArgument(new Reference('request_stack'));
-        $container->setDefinition('aureka_vb.login_handler', $definition);
+        $definition->addTag('kernel.event_listener', array(
+            'event' => 'security.authentication.success',
+            'method' => 'onUserLogin'));
+        $definition->addTag('kernel.event_listener', array(
+            'event' => 'kernel.response',
+            'method' => 'onKernelResponse'));
+        $container->setDefinition('aureka_vb.login_listener', $definition);
     }
 
 

@@ -1,18 +1,15 @@
 <?php
 
-namespace Aureka\VBBundle\Handler;
-
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+namespace Aureka\VBBundle\Event\Listener;
 
 use Aureka\VBBundle\VBUsers,
     Aureka\VBBundle\VBSession;
 use Aureka\VBBundle\Exception\VBUserException;
 
+use Symfony\Component\Security\Core\Event\AuthenticationEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class LoginHandler implements AuthenticationSuccessHandlerInterface
+class LoginListener
 {
 
     private $userProvider;
@@ -27,9 +24,10 @@ class LoginHandler implements AuthenticationSuccessHandlerInterface
         $this->session = $session;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token)
+
+    public function onUserLogin(AuthenticationEvent $event)
     {
-        $user = $token->getUser();
+        $user = $event->getAuthenticationToken()->getUser();
         try {
             $this->userToLogIn = $this->userProvider->load($this->session, $user->getUsername());
         } catch (VBUserException $e) {

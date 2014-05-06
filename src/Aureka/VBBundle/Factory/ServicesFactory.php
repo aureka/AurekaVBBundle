@@ -15,7 +15,7 @@ class ServicesFactory
 
     public static function createLogin(VBConfiguration $config, RequestStack $request_stack)
     {
-        return self::create('Aureka\VBBundle\Handler\LoginHandler', $config, $request_stack);
+        return self::create('Aureka\VBBundle\Event\Listener\LoginListener', $config, $request_stack);
     }
 
 
