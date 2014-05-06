@@ -3,7 +3,8 @@
 namespace Aureka\VBBundle\Handler;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
@@ -27,6 +28,7 @@ class LoginHandler implements AuthenticationSuccessHandlerInterface
         $this->session = $session;
     }
 
+
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
         $user = $token->getUser();
@@ -35,6 +37,7 @@ class LoginHandler implements AuthenticationSuccessHandlerInterface
         } catch (VBUserException $e) {
             $this->userToLogIn = $this->userProvider->create($this->session, $user->getUsername(), $user->getPassword());
         }
+        return new RedirectResponse('/');
     }
 
 
