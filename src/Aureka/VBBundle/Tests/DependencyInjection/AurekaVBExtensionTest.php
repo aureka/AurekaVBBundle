@@ -51,11 +51,11 @@ class LoginListenerTest extends WebTestCase
     /**
      * @test
      */
-    public function itDefinesALoginListener()
+    public function itDefinesALoginHandler()
     {
-        $listener = $this->container->get('aureka_vb.login_listener');
+        $handler = $this->container->get('aureka_vb.login_handler');
 
-        $this->assertInstanceOf('Aureka\VBBundle\Event\Listener\LoginListener', $listener);
+        $this->assertInstanceOf('Aureka\VBBundle\Handler\LoginHandler', $handler);
     }
 
 

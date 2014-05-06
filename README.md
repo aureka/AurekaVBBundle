@@ -65,4 +65,6 @@ security:
             # ...
             logout:
                 handlers: [aureka_vb.logout_handler]
+            form_login:
+                success_handler: aureka_vb.login_handler
 ```
