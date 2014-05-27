@@ -11,11 +11,13 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
     private $db;
     private $users;
 
+    const DEFAULT_GROUP = 2;
+
 
     public function setUp()
     {
         $this->db = $this->aDoubleOf('Aureka\VBBundle\VBDatabase');
-        $this->users = new VBUsers($this->db, 'vb_session_', 1, 'license');
+        $this->users = new VBUsers($this->db, self::DEFAULT_GROUP);
     }
 
     /**
@@ -23,7 +25,7 @@ class VBUsersTest extends \PHPUnit_Framework_TestCase
      */
     public function itCreatesUsers()
     {
-        $user_data = array('username' => 'some_name', 'password' => 'some_password');
+        $user_data = array('username' => 'some_name', 'password' => 'some_password', 'usergroupid' => self::DEFAULT_GROUP);
         $session = $this->aDoubleOf('Aureka\VBBundle\VBSession');
 
         $this->db->expects($this->once())

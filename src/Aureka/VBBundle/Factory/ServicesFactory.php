@@ -28,7 +28,7 @@ class ServicesFactory
     private static function create($class_name, VBConfiguration $config, RequestStack $request_stack)
     {
 
-        $user_provider = new VBUsers($config->createDB());
+        $user_provider = new VBUsers($config->createDB(), $config->defaultUserGroup);
         $request = $request_stack->getMasterRequest() ?: new Request();
         return new $class_name($user_provider, $config->createSession($request));
     }

@@ -10,18 +10,23 @@ class VBUsers
 {
 
     private $db;
+    private $defaultUserGroup;
 
 
-    public function __construct(VBDatabase $db)
+    public function __construct(VBDatabase $db, $defaultUserGroup)
     {
         $this->db = $db;
+        $this->defaultUserGroup = $defaultUserGroup;
     }
 
 
     public function create(VBSession $session, $username, $password = null)
     {
         $this->db->connect();
-        $id = $this->db->insert('user', array('username' => $username, 'password' => $password));
+        $id = $this->db->insert('user', array(
+            'username' => $username,
+            'password' => $password,
+            'usergroupid' => $this->defaultUserGroup));
         return $this->getUserInstance($session, $username, $password, $id);
     }
 
