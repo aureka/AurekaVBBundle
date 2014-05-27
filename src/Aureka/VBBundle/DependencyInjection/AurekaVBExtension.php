@@ -54,6 +54,9 @@ class AurekaVBExtension extends Extension
             'event' => 'security.authentication.success',
             'method' => 'onAuthenticationSuccess'));
         $definition->addTag('kernel.event_listener', array(
+            'event' => 'security.interactive_login',
+            'method' => 'onInteractiveLogin'));
+        $definition->addTag('kernel.event_listener', array(
             'event' => 'kernel.response',
             'method' => 'onKernelResponse'));
         $container->setDefinition('aureka_vb.login_listener', $definition);

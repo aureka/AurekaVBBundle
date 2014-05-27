@@ -7,6 +7,8 @@ use Aureka\VBBundle\VBUsers,
 use Aureka\VBBundle\Exception\VBUserException;
 
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class LoginListener
@@ -25,14 +27,28 @@ class LoginListener
     }
 
 
+    public function onInteractiveLogin(InteractiveLoginEvent $event)
+    {
+        $user = $event->getAuthenticationToken()->getUser();
+        return $this->storeUser($user);
+    }
+
+
     public function onAuthenticationSuccess(AuthenticationEvent $event)
     {
         $user = $event->getAuthenticationToken()->getUser();
+        return $this->storeUser($user);
+    }
+
+
+    private function storeUser(UserInterface $user)
+    {
         try {
             $this->userToLogIn = $this->userProvider->load($this->session, $user->getUsername());
         } catch (VBUserException $e) {
             $this->userToLogIn = $this->userProvider->create($this->session, $user->getUsername(), $user->getPassword());
         }
+        return $this;
     }
 
 
