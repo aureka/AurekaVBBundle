@@ -9,7 +9,8 @@ use Aureka\VBBundle\Exception\VBUserException;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent,
+    FOS\UserBundle\Event\FilterUserResponseEvent;
 
 class LoginListener
 {
@@ -38,6 +39,12 @@ class LoginListener
     {
         $user = $event->getAuthenticationToken()->getUser();
         return $this->storeUser($user);
+    }
+
+
+    public function onFOSUserRegistration(FilterUserResponseEvent $event)
+    {
+        return $this->storeUser($event->getUser());
     }
 
 
