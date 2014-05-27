@@ -57,7 +57,7 @@ class AurekaVBExtension extends Extension
             'event' => 'security.interactive_login',
             'method' => 'onInteractiveLogin'));
         $definition->addTag('kernel.event_listener', array(
-            'event' => 'fos_user.registration.confirm',
+            'event' => 'fos_user.registration.completed',
             'method' => 'onFOSUserRegistration'));
         $definition->addTag('kernel.event_listener', array(
             'event' => 'kernel.response',
