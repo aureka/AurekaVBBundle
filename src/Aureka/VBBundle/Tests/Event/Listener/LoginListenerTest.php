@@ -40,7 +40,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with($this->session, 'test_username');
 
-        $this->listener->onUserLogin($event);
+        $this->listener->onAuthenticationSuccess($event);
     }
 
 
@@ -55,7 +55,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->provider->expects($this->never())
             ->method('create');
 
-        $this->listener->onUserLogin($event);
+        $this->listener->onAuthenticationSuccess($event);
     }
 
 
@@ -72,7 +72,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('login')
             ->with($response_event->getResponse());
 
-        $this->listener->onUserLogin($authentication_event);
+        $this->listener->onAuthenticationSuccess($authentication_event);
         $this->listener->onKernelResponse($response_event);
     }
 
@@ -91,7 +91,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('updateSession')
             ->with($this->session);
 
-        $this->listener->onUserLogin($authentication_event);
+        $this->listener->onAuthenticationSuccess($authentication_event);
         $this->listener->onKernelResponse($response_event);
     }
 

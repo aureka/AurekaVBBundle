@@ -52,7 +52,7 @@ class AurekaVBExtension extends Extension
         $definition->addArgument(new Reference('request_stack'));
         $definition->addTag('kernel.event_listener', array(
             'event' => 'security.authentication.success',
-            'method' => 'onUserLogin'));
+            'method' => 'onAuthenticationSuccess'));
         $definition->addTag('kernel.event_listener', array(
             'event' => 'kernel.response',
             'method' => 'onKernelResponse'));

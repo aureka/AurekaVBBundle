@@ -25,7 +25,7 @@ class LoginListener
     }
 
 
-    public function onUserLogin(AuthenticationEvent $event)
+    public function onAuthenticationSuccess(AuthenticationEvent $event)
     {
         $user = $event->getAuthenticationToken()->getUser();
         try {
